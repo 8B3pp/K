@@ -6,7 +6,7 @@ if (typeof window.supabaseClient === 'undefined') {
 }
 const sb = window.supabaseClient;
 
-// Service Worker
+// Service Worker dla powiadomień push
 if ('serviceWorker' in navigator) {
     const swCode = `
         self.addEventListener('push', function(event) {
@@ -16,7 +16,7 @@ if ('serviceWorker' in navigator) {
                 icon: '/K/icon.png',
                 badge: '/K/badge.png',
                 vibrate: [200, 100, 200],
-                data: { url: data.url || '/K/index.html' }
+                data: { url: data.url || 'https://8b3pp.github.io/K/index.html' }
             };
             event.waitUntil(self.registration.showNotification(data.title || 'Terminarz 6B', options));
         });
@@ -34,12 +34,14 @@ if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(err => console.log('SW error:', err));
 }
 
+// Stan aplikacji
 const LISTA_ADMINOW = ["Hubert_Bereźnicki", "Ewa_Pachana", "iwo_nowacki"];
 let aktualnaSekcja = 'skrzynka';
 let edytowaneID = null;
 let mojaSesja = null;
 let podgladWiadomoscObj = null;
 
+// Funkcje pomocnicze
 function wyslijPowiadomienie(tytul, tresc) {
     if ('Notification' in window && Notification.permission === 'granted') {
         new Notification(tytul, { body: tresc, icon: '/K/icon.png' });
@@ -52,26 +54,27 @@ function generujFakeEmail(imie, nazwisko) {
     return czysteImie + czysteNazwisko + '@klasa.com';
 }
 
-// Autoryzacja - ścieżki WZGLĘDNE (bez / na początku)
+// Sprawdzenie autoryzacji
 sb.auth.onAuthStateChange((event, session) => {
     const obecnaStrona = window.location.pathname.toLowerCase();
     if (session) {
         if (event === 'SIGNED_IN') {
             if (obecnaStrona.includes('rejestracja')) {
                 alert("Poprawnie zarejestrowano i zalogowano!");
-                window.location.href = 'index.html';
+                window.location.href = 'https://8b3pp.github.io/K/index.html';
             } else if (obecnaStrona.includes('logowanie')) {
                 alert("Poprawnie zalogowano!");
-                window.location.href = 'index.html';
+                window.location.href = 'https://8b3pp.github.io/K/index.html';
             }
         }
     } else {
-        if (obecnaStrona.includes('index') || obecnaStrona.endsWith('/K/') || obecnaStrona === '/K/') {
-            window.location.href = 'logowanie.html';
+        if (obecnaStrona.includes('index') || obecnaStrona === '/' || obecnaStrona === '/K/' || obecnaStrona.endsWith('/K/')) {
+            window.location.href = 'https://8b3pp.github.io/K/logowanie.html';
         }
     }
 });
 
+// Główna funkcja interfejsu
 function _uruchomInterfejs() {
     if (typeof window.supabaseClient === 'undefined') {
         setTimeout(_uruchomInterfejs, 100);
@@ -82,7 +85,7 @@ function _uruchomInterfejs() {
 
     sb.auth.getUser().then(async ({ data: { user } }) => {
         if (!user) {
-            window.location.href = 'logowanie.html';
+            window.location.href = 'https://8b3pp.github.io/K/logowanie.html';
             return;
         }
         mojaSesja = user;
@@ -119,6 +122,7 @@ function _uruchomInterfejs() {
         })
         .subscribe();
 
+    // Event listenery
     const ikonkaProfilu = document.getElementById('ikonka-profilu');
     const btnWyloguj = document.getElementById('btn-wyloguj');
     const menuProfilu = document.getElementById('menu-profilu');
@@ -154,7 +158,7 @@ function _uruchomInterfejs() {
     if (btnWyloguj) {
         btnWyloguj.addEventListener('click', async () => {
             await sb.auth.signOut();
-            window.location.href = 'logowanie.html';
+            window.location.href = 'https://8b3pp.github.io/K/logowanie.html';
         });
     }
 
@@ -205,6 +209,7 @@ function _uruchomInterfejs() {
         });
     }
 
+    // Przycisk młotka admina
     const przyciskAdminPanel = document.createElement('div');
     przyciskAdminPanel.id = 'mlotek-admina';
     przyciskAdminPanel.style.cssText = 'display:none; cursor:pointer; width:45px; height:45px; background:#dc3545; color:white; border-radius:50%; align-items:center; justify-content:center; font-size:20px; box-shadow:0 4px 10px rgba(220,53,69,0.3);';
@@ -296,6 +301,7 @@ function _uruchomInterfejs() {
         });
     }
 
+    // Formularz dodawania
     const priorytetSelect = `<div style="margin-bottom:15px;"><label style="display:block;margin-bottom:5px;font-size:14px;color:#666;">Priorytet</label><select id="form-priorytet" style="width:100%;padding:10px;border:2px solid #e2e8f0;border-radius:8px;"><option value="normalny">Normalny</option><option value="sredni">Średni</option><option value="wysoki">Wysoki</option></select></div>`;
 
     function renderujPolaFormularza() {
@@ -420,6 +426,7 @@ function _uruchomInterfejs() {
     }
 }
 
+// Funkcje globalne
 window.zmienSekcje = function(sekcja) {
     aktualnaSekcja = sekcja;
     const btnSkrzynka = document.getElementById('sekcja-skrzynka');
@@ -696,7 +703,7 @@ window.usunMojeKonto = async function() {
     await sb.from('profiles').delete().eq('id', mojaSesja.id);
     await sb.auth.signOut();
     alert("Konto usunięte.");
-    window.location.href = 'logowanie.html';
+    window.location.href = 'https://8b3pp.github.io/K/logowanie.html';
 };
 
 async function odswiezTerminarz() {
@@ -741,6 +748,7 @@ async function sprawdzNoweWiadomosci() {
     if (maNowe) wyslijPowiadomienie('Nowa wiadomość!', 'Masz nową wiadomość w skrzynce.');
 }
 
+// Uruchom interfejs
 if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", _uruchomInterfejs);
 } else {
