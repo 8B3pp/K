@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Logowanie - Terminarz 6B</title>
+</head>
+<body>
+    <div style="max-width: 400px; margin: 60px auto; padding: 30px; background: #ffffff; border-radius: 12px; font-family: 'Segoe UI', sans-serif; box-shadow: 0 10px 30px rgba(225, 225, 225, 0.3);">
+        <h2 style="text-align: center; color: #333; margin-bottom: 25px; font-weight: 600;">Zaloguj się</h2>
+        <hr>
+        <div style="margin-bottom: 15px;">
+            <label style="display: block; margin-bottom: 5px; color: #666; font-size: 14px;">Imię</label>
+            <input type="text" id="login-imie" placeholder="Wpisz imię" style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 15px; box-sizing: border-box;">
+        </div>
+        <div style="margin-bottom: 15px;">
+            <label style="display: block; margin-bottom: 5px; color: #666; font-size: 14px;">Nazwisko</label>
+            <input type="text" id="login-nazwisko" placeholder="Wpisz nazwisko" style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 15px; box-sizing: border-box;">
+        </div>
+        <div style="margin-bottom: 25px;">
+            <label style="display: block; margin-bottom: 5px; color: #666; font-size: 14px;">Hasło</label>
+            <input type="password" id="login-password" placeholder="Twoje hasło" style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 15px; box-sizing: border-box;">
+        </div>
+        <button id="btn-logowanie" style="width: 100%; padding: 14px; background: #28a745; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; margin-bottom: 15px;">Zaloguj się</button>
+        <div style="text-align: center; font-size: 14px; color: #666;">
+            Nie masz konta? <a href="/rejestracja" style="color: #007bff; text-decoration: none; font-weight: bold;">Zarejestruj się</a>
+            <hr>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script>
+        // Inicjalizacja Supabase
+        if (typeof window.supabaseClient === 'undefined') {
+            const SUPABASE_URL = 'https://uvjgmxvfzvweoxeicned.supabase.co';
+            const SUPABASE_ANON_KEY = 'sb_publishable_hGHRqdmuObIyLnpzVzZiPA_Cslp7V1G';
+            window.supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        }
+        const sb = window.supabaseClient;
+
+        function generujFakeEmail(imie, nazwisko) {
+            let czysteImie = imie.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/ł/g, "l").replace(/[^a-z0-9]/g, '');
+            let czysteNazwisko = nazwisko.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/ł/g, "l").replace(/[^a-z0-9]/g, '');
+            return czysteImie + czysteNazwisko + '@klasa.com';
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const btnLogowanie = document.getElementById('btn-logowanie');
+            if (btnLogowanie) {
+                btnLogowanie.addEventListener('click', async () => {
+                    const imie = document.getElementById('login-imie').value;
+                    const nazwisko = document.getElementById('login-nazwisko').value;
+                    const password = document.getElementById('login-password').value;
+                    if (!imie || !nazwisko || !password) return alert("Wypełnij wszystkie pola!");
+                    const fakeEmail = generujFakeEmail(imie, nazwisko);
+                    const { error } = await sb.auth.signInWithPassword({ email: fakeEmail, password });
+                    if (error) return alert("Błędne imię, nazwisko lub hasło!");
+                    window.location.href = '/';
+                });
+            }
+        });
+    </script>
+</body>
+</html>
