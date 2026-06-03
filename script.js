@@ -61,15 +61,15 @@ sb.auth.onAuthStateChange((event, session) => {
         if (event === 'SIGNED_IN') {
             if (obecnaStrona.includes('rejestracja')) {
                 alert("Poprawnie zarejestrowano i zalogowano!");
-                window.location.href = '/K/index.html';
+                window.location.href = 'index.html';
             } else if (obecnaStrona.includes('logowanie')) {
                 alert("Poprawnie zalogowano!");
-                window.location.href = '/K/index.html';
+                window.location.href = 'index.html';
             }
         }
     } else {
         if (obecnaStrona.includes('index') || obecnaStrona === '/' || obecnaStrona.endsWith('/K/')) {
-            window.location.href = '/K/logowanie.html';
+            window.location.href = 'logowanie.html';
         }
     }
 });
@@ -81,20 +81,21 @@ function _uruchomInterfejs() {
         return;
     }
 
-    // Sprawdź czy jesteśmy na stronie głównej
     if (!document.getElementById('kontener-kafelkow')) return;
 
     sb.auth.getUser().then(async ({ data: { user } }) => {
         if (!user) {
-            window.location.href = '/K/logowanie.html';
+            window.location.href = 'logowanie.html';
             return;
         }
         mojaSesja = user;
 
         const { data: profil } = await sb.from('profiles').select('*').eq('id', user.id).single();
         if (profil) {
-            document.getElementById('ikonka-profilu').innerText = profil.imie ? profil.imie.charAt(0).toUpperCase() : 'U';
-            document.getElementById('profil-pelne-nazwisko').innerText = (profil.imie || '') + " " + (profil.nazwisko || '');
+            const ikonka = document.getElementById('ikonka-profilu');
+            const pelneNazwisko = document.getElementById('profil-pelne-nazwisko');
+            if (ikonka) ikonka.innerText = profil.imie ? profil.imie.charAt(0).toUpperCase() : 'U';
+            if (pelneNazwisko) pelneNazwisko.innerText = (profil.imie || '') + " " + (profil.nazwisko || '');
 
             const klucz1 = profil.imie + "_" + profil.nazwisko;
             const klucz2 = profil.imie.trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/ł/g, "l") + "_" + profil.nazwisko.trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/ł/g, "l");
@@ -111,7 +112,6 @@ function _uruchomInterfejs() {
         sprawdzNoweWiadomosci();
     });
 
-    // Subskrypcja na zmiany w bazie
     sb.channel('zmiany-interfejsu')
         .on('postgres_changes', { event: '*', schema: 'public', table: 'terminarz' }, () => {
             odswiezTerminarz();
@@ -158,7 +158,7 @@ function _uruchomInterfejs() {
     if (btnWyloguj) {
         btnWyloguj.addEventListener('click', async () => {
             await sb.auth.signOut();
-            window.location.href = '/K/logowanie.html';
+            window.location.href = 'logowanie.html';
         });
     }
 
@@ -703,7 +703,7 @@ window.usunMojeKonto = async function() {
     await sb.from('profiles').delete().eq('id', mojaSesja.id);
     await sb.auth.signOut();
     alert("Konto usunięte.");
-    window.location.href = '/K/logowanie.html';
+    window.location.href = 'logowanie.html';
 };
 
 async function odswiezTerminarz() {
@@ -748,7 +748,7 @@ async function sprawdzNoweWiadomosci() {
     if (maNowe) wyslijPowiadomienie('Nowa wiadomość!', 'Masz nową wiadomość w skrzynce.');
 }
 
-// Uruchom interfejs po załadowaniu strony
+// Uruchom interfejs
 if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", _uruchomInterfejs);
 } else {
