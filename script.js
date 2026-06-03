@@ -16,7 +16,7 @@ if ('serviceWorker' in navigator) {
                 icon: '/K/icon.png',
                 badge: '/K/badge.png',
                 vibrate: [200, 100, 200],
-                data: { url: data.url || '/K/index.html' }
+                data: { url: data.url || 'https://8b3pp.github.io/K/index.html' }
             };
             event.waitUntil(self.registration.showNotification(data.title || 'Terminarz 6B', options));
         });
@@ -54,22 +54,22 @@ function generujFakeEmail(imie, nazwisko) {
     return czysteImie + czysteNazwisko + '@klasa.com';
 }
 
-// Sprawdzenie autoryzacji - POPRAWIONE ŚCIEŻKI
+// Sprawdzenie autoryzacji
 sb.auth.onAuthStateChange((event, session) => {
     const obecnaStrona = window.location.pathname.toLowerCase();
     if (session) {
         if (event === 'SIGNED_IN') {
             if (obecnaStrona.includes('rejestracja')) {
                 alert("Poprawnie zarejestrowano i zalogowano!");
-                window.location.href = '/K/index.html';
+                window.location.href = 'https://8b3pp.github.io/K/index.html';
             } else if (obecnaStrona.includes('logowanie')) {
                 alert("Poprawnie zalogowano!");
-                window.location.href = '/K/index.html';
+                window.location.href = 'https://8b3pp.github.io/K/index.html';
             }
         }
     } else {
         if (obecnaStrona.includes('index') || obecnaStrona === '/' || obecnaStrona === '/K/' || obecnaStrona.endsWith('/K/')) {
-            window.location.href = '/K/logowanie.html';
+            window.location.href = 'https://8b3pp.github.io/K/logowanie.html';
         }
     }
 });
@@ -85,7 +85,7 @@ function _uruchomInterfejs() {
 
     sb.auth.getUser().then(async ({ data: { user } }) => {
         if (!user) {
-            window.location.href = '/K/logowanie.html';
+            window.location.href = 'https://8b3pp.github.io/K/logowanie.html';
             return;
         }
         mojaSesja = user;
@@ -158,7 +158,7 @@ function _uruchomInterfejs() {
     if (btnWyloguj) {
         btnWyloguj.addEventListener('click', async () => {
             await sb.auth.signOut();
-            window.location.href = '/K/logowanie.html';
+            window.location.href = 'https://8b3pp.github.io/K/logowanie.html';
         });
     }
 
@@ -703,7 +703,7 @@ window.usunMojeKonto = async function() {
     await sb.from('profiles').delete().eq('id', mojaSesja.id);
     await sb.auth.signOut();
     alert("Konto usunięte.");
-    window.location.href = '/K/logowanie.html';
+    window.location.href = 'https://8b3pp.github.io/K/logowanie.html';
 };
 
 async function odswiezTerminarz() {
