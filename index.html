@@ -35,9 +35,9 @@
 
         <!-- TERMINARZ -->
         <div style="background: white; padding: 25px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.03); margin-top: 20px;">
-            <h2 style="margin-top: 0; color: #222; border-bottom: 2px solid #f0f4f8; padding-bottom: 12px; font-size: 22px;">Terminarz Wydarzeń</h2>
+            <h2 style="margin-top: 0; color: #222; border-bottom: 2px solid #f0f4f8; padding-bottom: 12px; font-size: 22px;">Terminarz</h2>
             <div id="kontener-kafelkow" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(calc(50% - 15px), 1fr)); gap: 20px; margin-top: 20px;">
-                <div style="grid-column: 1 / -1; text-align: center; color: #999; padding: 40px;">Ładowanie wydarzeń z bazy danych...</div>
+                <div style="grid-column: 1 / -1; text-align: center; color: #999; padding: 40px;">Ładowanie wydarzeń z terminarza...</div>
             </div>
         </div>
 
@@ -66,7 +66,7 @@
                 <span id="zamknij-modal-poczty" style="position: absolute; top: 15px; right: 15px; font-size: 24px; cursor: pointer; color: #999; z-index: 10;">&times;</span>
                 <div style="display: flex; gap: 5px; margin-bottom: 15px; padding-right: 40px;">
                     <button id="sekcja-skrzynka" onclick="window.zmienSekcje('skrzynka')" style="flex: 1; padding: 10px; background: #007bff; color: white; border: none; border-radius: 8px 8px 0 0; cursor: pointer; font-weight: bold; font-size: 13px;">Skrzynka</button>
-                    <button id="sekcja-wyslane" onclick="window.zmienSekcje('wyslane')" style="flex: 1; padding: 10px; background: #e2e8f0; color: #333; border: none; border-radius: 8px 8px 0 0; cursor: pointer; font-weight: bold; font-size: 13px;">Moje wysłane</button>
+                    <button id="sekcja-wyslane" onclick="window.zmienSekcje('wyslane')" style="flex: 1; padding: 10px; background: #e2e8f0; color: #333; border: none; border-radius: 8px 8px 0 0; cursor: pointer; font-weight: bold; font-size: 13px;">Wysłane</button>
                     <button id="sekcja-kosz" onclick="window.zmienSekcje('kosz')" style="flex: 1; padding: 10px; background: #e2e8f0; color: #333; border: none; border-radius: 8px 8px 0 0; cursor: pointer; font-weight: bold; font-size: 13px;">Kosz</button>
                 </div>
                 <button id="btn-nowa-wiadomosc" style="position: absolute; top: 60px; right: 20px; background: #007bff; color: white; border: none; width: 32px; height: 32px; border-radius: 50%; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-weight: bold; z-index: 5;">+</button>
