@@ -716,7 +716,7 @@ async function odswiezTerminarz() {
     }
     k.innerHTML = data.map(w => {
         let c = w.priorytet === 'wysoki' ? '#f44336' : (w.priorytet === 'sredni' ? '#ff9800' : '#9e9e9e');
-        return `<div style="background:white;border:1px solid #e2e8f0;border-radius:12px;padding:20px;display:flex;flex-direction:column;justify-content:space-between;border-left:6px solid ${c};"><div><h4 style="margin:0 0 5px 0;color:#333;">${w.typ==='informacja'?w.temat:w.typ.toUpperCase()+': '+w.temat}</h4><span style="font-size:12px;font-weight:bold;color:${c};">${w.priorytet}</span></div><button onclick="window.otworzPodgladElementu(${w.id})" style="margin-top:15px;width:100%;padding:8px;background:#007bff;color:white;border:none;border-radius:6px;font-weight:bold;cursor:pointer;">Sprawdź</button></div>`;
+        return `<div style="background:#1C3A5C;border:1px solid #e2e8f0;border-radius:12px;padding:20px;display:flex;flex-direction:column;justify-content:space-between;border-left:6px solid ${c};"><div><h4 style="margin:0 0 5px 0;color:#333;">${w.typ==='informacja'?w.temat:w.typ.toUpperCase()+': '+w.temat}</h4><span style="font-size:12px;font-weight:bold;color:${c};">${w.priorytet}</span></div><button onclick="window.otworzPodgladElementu(${w.id})" style="margin-top:15px;width:100%;padding:8px;background:#007bff;color:white;border:none;border-radius:6px;font-weight:bold;cursor:pointer;">Sprawdź</button></div>`;
     }).join('');
 }
 
