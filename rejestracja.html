@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <title>Terminarz - 6B (Rejestracja)</title>
     <style>
+        * {
+            box-sizing: border-box;
+        }
+
         body { 
             background-color: #0D1B2A; 
             margin: 0; 
@@ -12,25 +16,27 @@
             display: flex;
             justify-content: center;
             align-items: flex-start;
-            padding-top: 135px;
+            padding-top: 80px;
+            font-family: 'Segoe UI', sans-serif;
         }
         
         .container {
             display: flex;
-            background: #162447;
+            background: #0D1B2A;
             gap: 40px;
             max-width: 1200px;
             width: 100%;
+            padding: 0 20px;
             justify-content: center;
             align-items: flex-start;
         }
         
         .card {
             flex: 0 1 400px;
-            background: #fffff;
+            background: #162447;
             border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            font-family: 'Segoe UI', sans-serif;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.06);
         }
         
         .info-card {
@@ -43,7 +49,7 @@
         
         h1 {
             text-align: center; 
-            color: #333; 
+            color: #FFFFFF; 
             margin-bottom: 25px; 
             font-weight: 700;
             margin-top: 0;
@@ -51,7 +57,7 @@
         
         h2 {
             text-align: center; 
-            color: #333; 
+            color: #FFFFFF; 
             margin-bottom: 25px; 
             font-weight: 600;
             margin-top: 0;
@@ -59,44 +65,51 @@
         
         h3 {
             text-align: center;
-            color: #333;
+            color: #E0E6ED;
             font-weight: 500;
         }
         
         p {
             text-align: center;
-            color: #555;
+            color: #CBD5E1;
             line-height: 1.5;
         }
         
         hr {
             margin: 20px 0;
             border: none;
-            border-top: 1px solid #e0e0e0;
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
         }
         
         label {
             display: block; 
             margin-bottom: 5px; 
-            color: #666; 
+            color: #CBD5E1; 
             font-size: 14px;
         }
         
         input {
             width: 100%; 
             padding: 12px; 
-            border: 2px solid #e0e0e0; 
+            background: #1C3A5C;
+            border: 2px solid rgba(255, 255, 255, 0.1); 
             border-radius: 8px; 
             font-size: 15px; 
             box-sizing: border-box; 
             transition: 0.3s;
             margin-bottom: 15px;
+            color: #FFFFFF;
+        }
+        
+        input::placeholder {
+            color: rgba(255, 255, 255, 0.4);
         }
         
         input:focus {
             outline: none;
-            border-color: #007bff;
-            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+            border-color: #38BDF8;
+            box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15);
+            background: #1F4270;
         }
         
         button {
@@ -119,18 +132,19 @@
         }
         
         a {
-            color: #007bff;
+            color: #38BDF8;
             text-decoration: none;
         }
         
         a:hover {
             text-decoration: underline;
+            color: #7DD3FC;
         }
         
         .login-link {
             text-align: center;
             margin-top: 20px;
-            color: #666;
+            color: #CBD5E1;
         }
     </style>
 </head>
