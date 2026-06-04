@@ -4,59 +4,172 @@
     <meta charset="UTF-8">
     <title>Terminarz - 6B (Rejestracja)</title>
     <style>
-        body { background-color: #D6ECFF; margin: 0; padding: 0; }
+        body { 
+            background-color: #D6ECFF; 
+            margin: 0; 
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding-top: 135px;
+        }
+        
+        .container {
+            display: flex;
+            gap: 40px;
+            max-width: 1200px;
+            width: 100%;
+            justify-content: center;
+            align-items: flex-start;
+        }
+        
+        .card {
+            flex: 0 1 400px;
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            font-family: 'Segoe UI', sans-serif;
+        }
+        
+        .info-card {
+            padding: 30px;
+        }
+        
+        .register-card {
+            padding: 30px;
+        }
+        
+        h1 {
+            text-align: center; 
+            color: #333; 
+            margin-bottom: 25px; 
+            font-weight: 700;
+            margin-top: 0;
+        }
+        
+        h2 {
+            text-align: center; 
+            color: #333; 
+            margin-bottom: 25px; 
+            font-weight: 600;
+            margin-top: 0;
+        }
+        
+        h3 {
+            text-align: center;
+            color: #333;
+            font-weight: 500;
+        }
+        
+        p {
+            text-align: center;
+            color: #555;
+            line-height: 1.5;
+        }
+        
+        hr {
+            margin: 20px 0;
+            border: none;
+            border-top: 1px solid #e0e0e0;
+        }
+        
+        label {
+            display: block; 
+            margin-bottom: 5px; 
+            color: #666; 
+            font-size: 14px;
+        }
+        
+        input {
+            width: 100%; 
+            padding: 12px; 
+            border: 2px solid #e0e0e0; 
+            border-radius: 8px; 
+            font-size: 15px; 
+            box-sizing: border-box; 
+            transition: 0.3s;
+            margin-bottom: 15px;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+        }
+        
+        button {
+            width: 100%; 
+            padding: 14px; 
+            background: #007bff; 
+            color: white; 
+            border: none; 
+            border-radius: 8px; 
+            font-size: 16px; 
+            font-weight: bold; 
+            cursor: pointer; 
+            transition: 0.2s;
+            margin-top: 10px;
+        }
+        
+        button:hover {
+            background: #0056b3;
+            transform: translateY(-1px);
+        }
+        
+        a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        
+        a:hover {
+            text-decoration: underline;
+        }
+        
+        .login-link {
+            text-align: center;
+            margin-top: 20px;
+            color: #666;
+        }
     </style>
 </head>
 <body>
-    <div id="element_36" class="w-object ww_element ww_animated" data-element-type="htmltool" groupid="wSection_5" fixed="false" fullwidth="false" data-positionorigin="pageTopLeft" data-dynamic-height="true" style="width: 600px; height: 652px; position: absolute; left: 20%; top: 135px; visibility: visible;">
-        <div id="element_36_content" class="content" style="padding: 0px; border-width: 0px; border-style: solid; border-radius: 0px; box-shadow: none; background: none; filter: none; opacity: 1;">
-            <div class="embedded_html_content">
-                <div style="max-width: 400px; height: 520px; margin: 20px auto; padding: 30px; background: #ffffff; border-radius: 12px; font-family: 'Segoe UI', sans-serif; box-shadow: 0 10px 30px rgba(225, 225, 225, 0.3);"> 
-                    <h1 style="text-align: center; color: #333; margin-bottom: 25px; font-weight: 700;">Witaj!</h1>
-                    <hr> 
-                    <h3 style="text-align: center;">Aby korzystać z Terminarza 6B</h3> 
-                    <h3 style="text-align: center;">Musisz się zarejestrować!</h3> 
-                    <p style="text-align: center;">Aby to zrobić wystarczy podać swoje imię, nazwisko oraz hasło jakie chcesz mieć do konta. I to wszystko!</p> 
-                    <hr>
-                    <p style="margin-top: 45px; text-align: center; font-weight: 700;">Do czego służy (co zawiera) terminarz 6B?</p> 
-                    <p style="text-align: center;">1. Łatwe sprawdzanie informacji zamiast latania po całej grupie klasowej.</p> 
-                    <p style="text-align: center;">2. Łatwe dodawanie informacji dla administracji grupy klasowej.</p> 
-                    <p style="text-align: center;">Terminarz służy po prostu do większej wygody sprawdzania jak i dodawania informacji po stronie użytkowników jak i administracji</p> 
-                </div> 
-                <p>.</p> 
-                <p>.</p>
-            </div>
+    <div class="container">
+        <!-- Panel informacyjny -->
+        <div class="card info-card">
+            <h1>Witaj!</h1>
+            <hr>
+            <h3>Aby korzystać z Terminarza 6B</h3>
+            <h3>Musisz się zarejestrować!</h3>
+            <p>Aby to zrobić wystarczy podać swoje imię, nazwisko oraz hasło jakie chcesz mieć do konta. I to wszystko!</p>
+            <hr>
+            <p style="margin-top: 45px; font-weight: 700;">Do czego służy (co zawiera) terminarz 6B?</p>
+            <p>1. Łatwe sprawdzanie informacji zamiast latania po całej grupie klasowej.</p>
+            <p>2. Łatwe dodawanie informacji dla administracji grupy klasowej.</p>
+            <p style="margin-top: 20px;">Terminarz służy po prostu do większej wygody sprawdzania jak i dodawania informacji po stronie użytkowników jak i administracji</p>
         </div>
-        <div class="backgroundOverlay" style="opacity: 1;"></div>
-    </div>
 
-    <div id="element_16" class="w-object ww_element ww_animated" data-element-type="htmltool" groupid="wSection_5" fixed="false" fullwidth="false" data-positionorigin="pageTopLeft" data-dynamic-height="true" style="width: 600px; height: 525px; position: absolute; left: 48%; top: 135px; visibility: visible;">
-        <div id="element_16_content" class="content" style="padding: 0px; border-width: 0px; border-style: solid; border-radius: 0px; box-shadow: none; background: none; filter: none; opacity: 1;">
-            <div class="embedded_html_content">
-                <div style="max-width: 400px; margin: 20px auto; padding: 30px; background: #ffffff; border-radius: 12px; box-shadow: 0 4px 15px rgba(255, 255, 255, 0.3); font-family: 'Segoe UI', sans-serif;"> 
-                    <h2 style="text-align: center; color: #333; margin-bottom: 25px; font-weight: 600;">Zarejestruj się!</h2>
-                    <hr> 
-                    <div style="margin-bottom: 15px;">
-                        <label style="display: block; margin-bottom: 5px; color: #666; font-size: 14px;">Imię</label>
-                        <input type="text" id="reg-imie" placeholder="Wpisz swoje prawdziwe imię!" style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 15px; box-sizing: border-box; transition: 0.3s;">
-                    </div> 
-                    <div style="margin-bottom: 15px;">
-                        <label style="display: block; margin-bottom: 5px; color: #666; font-size: 14px;">Nazwisko</label>
-                        <input type="text" id="reg-nazwisko" placeholder="Wpisz swoje prawdziwe nazwisko!" style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 15px; box-sizing: border-box; transition: 0.3s;">
-                    </div> 
-                    <div style="margin-bottom: 25px;">
-                        <label style="display: block; margin-bottom: 5px; color: #666; font-size: 14px;">Hasło</label>
-                        <input type="password" id="reg-password" placeholder="Min. 6 znaków. Dowolne." style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 15px; box-sizing: border-box; transition: 0.3s;">
-                    </div> 
-                    <button id="btn-rejestracja" style="width: 100%; padding: 14px; background: #007bff; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.2s;">Stwórz konto!</button>
-                    <p>Nie masz konta? <a href="/K/rejestracja">Zarejestruj się</a></p>
-                    <hr>
-                </div> 
-                <p>.</p> 
-                <p>.</p>
+        <!-- Panel rejestracji -->
+        <div class="card register-card">
+            <h2>Zarejestruj się!</h2>
+            <hr>
+            <div>
+                <label for="reg-imie">Imię</label>
+                <input type="text" id="reg-imie" placeholder="Wpisz swoje prawdziwe imię!">
+            </div>
+            <div>
+                <label for="reg-nazwisko">Nazwisko</label>
+                <input type="text" id="reg-nazwisko" placeholder="Wpisz swoje prawdziwe nazwisko!">
+            </div>
+            <div>
+                <label for="reg-password">Hasło</label>
+                <input type="password" id="reg-password" placeholder="Min. 6 znaków. Dowolne.">
+            </div>
+            <button id="btn-rejestracja">Stwórz konto!</button>
+            <div class="login-link">
+                <p>Masz już konto? <a href="/K/logowanie">Zaloguj się!</a></p>
             </div>
         </div>
-        <div class="backgroundOverlay" style="opacity: 1;"></div>
     </div>
 
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
