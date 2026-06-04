@@ -24,7 +24,8 @@
         .container {
             background: #162447;
             border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.06);
             padding: 30px;
             width: 100%;
             max-width: 400px;
@@ -37,27 +38,33 @@
             text-align: center;
         }
         .info-box h1 {
-            color: white;
+            color: #FFFFFF;
             margin-bottom: 20px;
             font-weight: 700;
         }
         .info-box h3 {
             margin: 15px 0;
-            color: white;
+            color: #E0E6ED;
         }
         .info-box p {
             margin: 10px 0;
-            color: white;
+            color: #CBD5E1;
             font-size: 14px;
+            line-height: 1.5;
+        }
+        .footer-note {
+            margin-top: 15px;
+            font-size: 12px;
+            color: #94A3B8;
         }
         hr {
             border: none;
-            border-top: 1px solid #e0e0e0;
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
             margin: 20px 0;
         }
         .form-box h2 {
             text-align: center;
-            color: white;
+            color: #FFFFFF;
             margin-bottom: 25px;
             font-weight: 600;
         }
@@ -67,21 +74,28 @@
         .form-group label {
             display: block;
             margin-bottom: 5px;
-            color: white;
+            color: #CBD5E1;
             font-size: 14px;
             font-weight: 500;
         }
         .form-group input {
             width: 100%;
             padding: 12px;
-            border: 2px solid #e0e0e0;
+            background: #1C3A5C;
+            border: 2px solid rgba(255, 255, 255, 0.1);
             border-radius: 8px;
             font-size: 15px;
-            transition: border 0.3s;
+            color: #FFFFFF;
+            transition: all 0.3s;
+        }
+        .form-group input::placeholder {
+            color: rgba(255, 255, 255, 0.4);
         }
         .form-group input:focus {
-            border-color: #007bff;
+            border-color: #38BDF8;
             outline: none;
+            box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15);
+            background: #1F4270;
         }
         .btn {
             width: 100%;
@@ -94,28 +108,26 @@
             font-weight: bold;
             cursor: pointer;
             margin: 10px 0 15px;
-            transition: background 0.3s;
+            transition: all 0.2s;
         }
         .btn:hover {
             background: #218838;
+            transform: translateY(-1px);
         }
         .register-link {
             text-align: center;
             font-size: 14px;
-            color: white;
+            color: #CBD5E1;
         }
         .register-link a {
-            color: #007bff;
+            color: #38BDF8;
             text-decoration: none;
             font-weight: bold;
+            transition: color 0.2s;
         }
         .register-link a:hover {
+            color: #7DD3FC;
             text-decoration: underline;
-        }
-        .footer-note {
-            margin-top: 15px;
-            font-size: 12px;
-            color: white;
         }
     </style>
 </head>
