@@ -10,7 +10,6 @@
             padding: 0;
             box-sizing: border-box;
         }
-
         body {
             background-color: #D6ECFF;
             font-family: 'Segoe UI', sans-serif;
@@ -22,7 +21,6 @@
             gap: 40px;
             flex-wrap: wrap;
         }
-
         .container {
             background: #ffffff;
             border-radius: 12px;
@@ -35,45 +33,37 @@
             flex-direction: column;
             justify-content: center;
         }
-
         .info-box {
             text-align: center;
         }
-
         .info-box h1 {
             color: #333;
             margin-bottom: 20px;
             font-weight: 700;
         }
-
         .info-box h3 {
             margin: 15px 0;
             color: #444;
         }
-
         .info-box p {
             margin: 10px 0;
             color: #666;
             font-size: 14px;
         }
-
         hr {
             border: none;
             border-top: 1px solid #e0e0e0;
             margin: 20px 0;
         }
-
         .form-box h2 {
             text-align: center;
             color: #333;
             margin-bottom: 25px;
             font-weight: 600;
         }
-
         .form-group {
             margin-bottom: 15px;
         }
-
         .form-group label {
             display: block;
             margin-bottom: 5px;
@@ -81,7 +71,6 @@
             font-size: 14px;
             font-weight: 500;
         }
-
         .form-group input {
             width: 100%;
             padding: 12px;
@@ -90,12 +79,10 @@
             font-size: 15px;
             transition: border 0.3s;
         }
-
         .form-group input:focus {
             border-color: #007bff;
             outline: none;
         }
-
         .btn {
             width: 100%;
             padding: 14px;
@@ -109,27 +96,22 @@
             margin: 10px 0 15px;
             transition: background 0.3s;
         }
-
         .btn:hover {
             background: #218838;
         }
-
         .register-link {
             text-align: center;
             font-size: 14px;
             color: #555;
         }
-
         .register-link a {
             color: #007bff;
             text-decoration: none;
             font-weight: bold;
         }
-
         .register-link a:hover {
             text-decoration: underline;
         }
-
         .footer-note {
             margin-top: 15px;
             font-size: 12px;
@@ -138,7 +120,6 @@
     </style>
 </head>
 <body>
-    <!-- Lewy panel – informacyjny -->
     <div class="container info-box">
         <h1>Witaj z powrotem!</h1>
         <hr>
@@ -146,10 +127,9 @@
         <h3>Musisz się zalogować!</h3>
         <p>Jeżeli jesteś nowy i nie masz jeszcze konta, kliknij na dole pod przyciskiem link <strong>Zarejestruj się!</strong> i wypełnij odpowiednie pola.</p>
         <hr>
-        <p class="footer-note">Created by Hubert B 6B</p>
+        <p class="footer-note">Created by Hubert B. 6B</p>
     </div>
 
-    <!-- Prawy panel – formularz logowania -->
     <div class="container form-box">
         <h2>Zaloguj się</h2>
         <hr>
@@ -167,19 +147,15 @@
         </div>
         <button class="btn" id="btn-logowanie">Zaloguj się</button>
         <div class="register-link">
-            Nie masz konta? <a href="/rejestracja">Zarejestruj się</a>
+            Nie masz konta? <a href="/K/rejestracja">Zarejestruj się</a>
         </div>
         <hr>
     </div>
 
-    <!-- Supabase SDK -->
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <script>
-        // Konfiguracja Supabase – zamień na prawdziwy URL i klucz anon
         const SUPABASE_URL = 'https://uvjgmxvfzvweoxeicned.supabase.co';
-        const SUPABASE_ANON_KEY = 'sb_publishable_hGHRqdmuObIyLnpzVzZiPA_Cslp7V1G'; // ⚠️ Użyj prawdziwego klucza anon z projektu Supabase
-
-        // Inicjalizacja klienta
+        const SUPABASE_ANON_KEY = 'sb_publishable_hGHRqdmuObIyLnpzVzZiPA_Cslp7V1G';
         let sb;
         if (typeof window.supabaseClient === 'undefined') {
             sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -188,7 +164,6 @@
             sb = window.supabaseClient;
         }
 
-        // Generowanie fałszywego e-maila na podstawie imienia i nazwiska
         function generujFakeEmail(imie, nazwisko) {
             const czysteImie = imie
                 .trim()
