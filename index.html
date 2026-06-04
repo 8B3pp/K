@@ -43,7 +43,7 @@
 
         <!-- MODAL 1: DODAWANIE WPISU -->
         <div id="modal-admina" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.2); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); z-index: 2000; align-items: center; justify-content: center;">
-            <div style="background: white; width: 100%; max-width: 500px; padding: 30px; border-radius: 16px; position: relative; box-sizing: border-box; box-shadow: 0 20px 40px rgba(0,0,0,0.15);">
+            <div style="background: #162447; width: 100%; max-width: 500px; padding: 30px; border-radius: 16px; position: relative; box-sizing: border-box; box-shadow: 0 20px 40px rgba(0,0,0,0.15);">
                 <span id="zamknij-modal-admina" style="position: absolute; top: 20px; right: 20px; font-size: 24px; cursor: pointer; color: #999;">&times;</span>
                 <h3 style="margin-top: 0; margin-bottom: 20px; color: #333;">Nowe Wydarzenie</h3>
                 <div style="margin-bottom: 15px;"><label style="display: block; margin-bottom: 5px; font-size: 14px; color: #666;">Typ wpisu</label><select id="form-typ" style="width: 100%; padding: 10px; border: 2px solid #e2e8f0; border-radius: 8px;"><option value="informacja">Informacja</option><option value="sprawdzian">Sprawdzian</option><option value="kartkowka">Kartkówka</option></select></div>
@@ -54,7 +54,7 @@
 
         <!-- MODAL 2: PODGLĄD KAFELKA -->
         <div id="modal-podgladu" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); z-index: 2500; align-items: center; justify-content: center;">
-            <div style="background: white; width: 100%; max-width: 500px; padding: 30px; border-radius: 16px; position: relative; box-sizing: border-box; box-shadow: 0 20px 40px rgba(0,0,0,0.2);">
+            <div style="background: #162447; width: 100%; max-width: 500px; padding: 30px; border-radius: 16px; position: relative; box-sizing: border-box; box-shadow: 0 20px 40px rgba(0,0,0,0.2);">
                 <span id="zamknij-modal-podgladu" style="position: absolute; top: 20px; right: 20px; font-size: 24px; cursor: pointer; color: #999;">&times;</span>
                 <div id="tresc-podgladu"></div>
             </div>
@@ -62,7 +62,7 @@
 
         <!-- MODAL 3: SKRZYNKA WIADOMOŚCI -->
         <div id="modal-poczty" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); z-index: 2100; align-items: center; justify-content: center;">
-            <div style="background: white; width: 100%; max-width: 650px; height: 85vh; padding: 20px; border-radius: 16px; display: flex; flex-direction: column; position: relative; box-sizing: border-box; box-shadow: 0 20px 40px rgba(0,0,0,0.2);">
+            <div style="background: #162447; width: 100%; max-width: 650px; height: 85vh; padding: 20px; border-radius: 16px; display: flex; flex-direction: column; position: relative; box-sizing: border-box; box-shadow: 0 20px 40px rgba(0,0,0,0.2);">
                 <span id="zamknij-modal-poczty" style="position: absolute; top: 15px; right: 15px; font-size: 24px; cursor: pointer; color: #999; z-index: 10;">&times;</span>
                 <div style="display: flex; gap: 5px; margin-bottom: 15px; padding-right: 40px;">
                     <button id="sekcja-skrzynka" onclick="window.zmienSekcje('skrzynka')" style="flex: 1; padding: 10px; background: #007bff; color: white; border: none; border-radius: 8px 8px 0 0; cursor: pointer; font-weight: bold; font-size: 13px;">Skrzynka</button>
@@ -76,7 +76,7 @@
 
         <!-- MODAL 4: PANEL ADMINISTRACYJNY -->
         <div id="modal-administracyjny" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); z-index: 2600; align-items: center; justify-content: center;">
-            <div style="background: white; width: 100%; max-width: 500px; padding: 25px; border-radius: 16px; position: relative; box-sizing: border-box; box-shadow: 0 20px 40px rgba(0,0,0,0.2);">
+            <div style="background: #162447; width: 100%; max-width: 500px; padding: 25px; border-radius: 16px; position: relative; box-sizing: border-box; box-shadow: 0 20px 40px rgba(0,0,0,0.2);">
                 <span id="zamknij-modal-administracyjny" style="position: absolute; top: 20px; right: 20px; font-size: 24px; cursor: pointer; color: #999;">&times;</span>
                 <h3 style="margin-top: 0; color: #333;">Panel Administracyjny</h3>
                 <div style="margin-bottom: 15px;"><label style="display: block; margin-bottom: 5px; font-size: 14px; color: #666;">Wybierz użytkownika</label><select id="admin-wybor-uzytkownika" style="width: 100%; padding: 10px; border: 2px solid #e2e8f0; border-radius: 8px;"><option value="">-- Wybierz --</option><option value="all">WSZYSCY UŻYTKOWNICY</option></select></div>
@@ -92,7 +92,7 @@
 
         <!-- MODAL 5: USTAWIENIA PROFILU -->
         <div id="modal-ustawien" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); z-index: 2700; align-items: center; justify-content: center;">
-            <div style="background: white; width: 100%; max-width: 500px; padding: 25px; border-radius: 16px; position: relative; box-sizing: border-box; box-shadow: 0 20px 40px rgba(0,0,0,0.2); max-height: 80vh; overflow-y: auto;">
+            <div style="background: #162447; width: 100%; max-width: 500px; padding: 25px; border-radius: 16px; position: relative; box-sizing: border-box; box-shadow: 0 20px 40px rgba(0,0,0,0.2); max-height: 80vh; overflow-y: auto;">
                 <span id="zamknij-modal-ustawien" style="position: absolute; top: 20px; right: 20px; font-size: 24px; cursor: pointer; color: #999;">&times;</span>
                 <h3 style="margin-top: 0; color: #333;">Ustawienia profilu</h3>
                 <div style="margin-bottom: 20px; text-align: center;"><img id="ust-awatar-podglad" src="" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; background: #e2e8f0; display: none;" onerror="this.style.display='none'"><div style="margin-top: 10px;"><input type="file" id="ust-awatar-input" accept="image/*,.gif" style="display: none;"><button onclick="document.getElementById('ust-awatar-input').click()" style="padding: 8px 16px; background: #007bff; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 13px;">Zmień ikonę</button> <button onclick="window.usunAwatar()" style="padding: 8px 16px; background: #dc3545; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 13px;">Usuń ikonę</button></div></div>
@@ -109,7 +109,7 @@
 
         <!-- MODAL 6: EDYCJA WPISU TERMINARZA -->
         <div id="modal-edycji" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); z-index: 2800; align-items: center; justify-content: center;">
-            <div style="background: white; width: 100%; max-width: 500px; padding: 25px; border-radius: 16px; position: relative; box-sizing: border-box; box-shadow: 0 20px 40px rgba(0,0,0,0.2);">
+            <div style="background: #162447; width: 100%; max-width: 500px; padding: 25px; border-radius: 16px; position: relative; box-sizing: border-box; box-shadow: 0 20px 40px rgba(0,0,0,0.2);">
                 <span id="zamknij-modal-edycji" style="position: absolute; top: 20px; right: 20px; font-size: 24px; cursor: pointer; color: #999;">&times;</span>
                 <h3 style="margin-top: 0; color: #333;">Edytuj wydarzenie</h3>
                 <div style="margin-bottom: 15px;"><label style="display: block; margin-bottom: 5px; font-size: 14px; color: #666;">Typ</label><select id="edit-typ" style="width: 100%; padding: 10px; border: 2px solid #e2e8f0; border-radius: 8px;"><option value="informacja">Informacja</option><option value="sprawdzian">Sprawdzian</option><option value="kartkowka">Kartkówka</option></select></div>
