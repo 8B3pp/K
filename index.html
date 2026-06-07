@@ -65,17 +65,18 @@
             <div style="background: #162447; width: 100%; max-width: 650px; height: 85vh; padding: 20px; border-radius: 16px; display: flex; flex-direction: column; position: relative; box-sizing: border-box; box-shadow: 0 20px 40px rgba(0,0,0,0.2);">
                 <span id="zamknij-modal-poczty" style="position: absolute; top: 15px; right: 15px; font-size: 24px; cursor: pointer; color: #999; z-index: 10;">&times;</span>
                 <div style="display: flex; gap: 5px; margin-bottom: 2px; padding-right: 40px;">
-                    <h4 style="color: white; margin-top: 8px;">Wiadomości</h4>
+                    <h4 style="color: white; margin-top: 6px;">Wiadomości</h4>
                     <button id="sekcja-skrzynka" onclick="window.zmienSekcje('skrzynka')" style="flex: 1; padding: 10px; background: #007bff; color: white; border: none; border-radius: 8px 8px 0 0; cursor: pointer; font-weight: bold; font-size: 13px; height: 33px;">Skrzynka</button>
                     <button id="sekcja-wyslane" onclick="window.zmienSekcje('wyslane')" style="flex: 1; padding: 10px; background: #e2e8f0; color: #333; border: none; border-radius: 8px 8px 0 0; cursor: pointer; font-weight: bold; font-size: 13px; height: 33px;">Wysłane</button>
                     <button id="sekcja-kosz" onclick="window.zmienSekcje('kosz')" style="flex: 1; padding: 10px; background: #e2e8f0; color: #333; border: none; border-radius: 8px 8px 0 0; cursor: pointer; font-weight: bold; font-size: 13px; height: 33px;">Kosz</button>
                 </div>
                 <hr style="width: calc(100% - 30px); margin: 2px 15px 0 15px; border: none; height: 1px; background: white;">
+                <div style="width: 30px;"></div>
                 <button id="btn-nowa-wiadomosc" style="position: absolute; top: 60px; right: 20px; background: #007bff; color: white; border: none; width: 32px; height: 32px; border-radius: 50%; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-weight: bold; z-index: 5;">+</button>
                 <div style="flex-grow: 1; overflow-y: auto;">
                     <div id="poczta-zawartosc" style="padding-right: 5px;"></div>
                     <hr style="width: calc(100% - 30px); margin: 25px 15px 0 15px; border: none; height: 1px; background: white;">
-                    <p style="color: white; margin-top: 25px;">To już koniec twoich powiadomień 😉</p>
+                    <p style="color: white; margin-top: 25px; text-align: center;">To już koniec twoich powiadomień 😉</p>
                 </div>
            </div>
         </div>
