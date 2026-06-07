@@ -590,9 +590,9 @@ window.otworzPodgladElementu = async function(id) {
     if (error || !data) return;
     const n = data.profiles ? `${data.profiles.imie} ${data.profiles.nazwisko}` : "Nieznany";
     const dUtw = data.stworzono_gdy ? new Date(data.stworzono_gdy).toLocaleString('pl-PL') : "Brak daty";
-    const dH = data.dodatkowe_info || "Brak";
+    const dH = data.dodatkowe_info || "Brak dodatkowych informacji";
     let c = data.priorytet === 'wysoki' ? '#f44336' : (data.priorytet === 'sredni' ? '#ff9800' : '#9e9e9e');
-    let tH = data.typ === 'informacja' ? `<p><strong>Temat:</strong> ${data.temat}</p><p><strong>Informacja:</strong> ${data.szczegoly}</p>` : `<p><strong>Przedmiot:</strong> ${data.temat}</p><p><strong>Dział:</strong> ${data.szczegoly}</p><p><strong>Dodatkowe:</strong> ${dH}</p>`;
+    let tH = data.typ === 'informacja' ? `<p><strong>Temat:</strong> ${data.temat}</p><p><strong>Informacja:</strong> ${data.szczegoly}</p>` : `<p><strong>Przedmiot:</strong> ${data.temat}</p><p><strong>Dział:</strong> ${data.szczegoly}</p><p><strong>Informacje dodatkowe:</strong> ${dH}</p>`;
     let pS = data.typ === 'sprawdzian' ? `<div style="display:flex;gap:10px;margin-top:20px;"><button disabled style="flex:1;padding:10px;background:#e2e8f0;color:#a0aec0;border:none;border-radius:6px;cursor:not-allowed;">Poucz się</button><button disabled style="flex:1;padding:10px;background:#e2e8f0;color:#a0aec0;border:none;border-radius:6px;cursor:not-allowed;">Powtórka</button></div>` : '';
 
     const { data: profil } = await sb.from('profiles').select('*').eq('id', mojaSesja.id).single();
