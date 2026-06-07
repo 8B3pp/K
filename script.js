@@ -522,10 +522,12 @@ window.podgladWiadomosciKosz = async function(id) {
     if (!k) return;
     k.innerHTML = `
         <div>
-            <p style="margin:5px 0;"><strong>Od:</strong> ${nadawca}</p>
-            <p style="margin:5px 0;"><strong>Do:</strong> ${odbiorca}</p>
-            <p style="margin:5px 0;"><strong>Temat:</strong> ${data.temat}</p>
-            <p style="margin:5px 0;font-size:11px;color:#999;">Usunięta: ${new Date(data.deleted_at).toLocaleString('pl-PL')}</p>
+            <div style="background-color: #007BFF; border-top-left-radius: 20px; border-bottom-right-radius: 20px; border-bottom-left-radius: 80px; border-top-right-radius: 80px;">
+                <p style="margin:5px 0;"><strong>Od:</strong> ${nadawca}</p>
+                <p style="margin:5px 0;"><strong>Do:</strong> ${odbiorca}</p>
+                <p style="margin:5px 0;"><strong>Temat:</strong> ${data.temat}</p>
+                <p style="margin:5px 0;font-size:11px;color:#999;">Usunięta: ${new Date(data.deleted_at).toLocaleString('pl-PL')}</p>
+            </div>
             <div style="background:#f5f5f5;padding:15px;border-radius:8px;margin-top:10px;white-space:pre-wrap;">${data.tresc}</div>
             <hr style="border:none;border-top:1px solid #eee;margin:15px 0;">
             <button onclick="window.zmienSekcje('kosz')" style="width:100%;padding:8px;background:#eee;color:#333;border:none;border-radius:4px;cursor:pointer;">Powrót</button>
