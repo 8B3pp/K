@@ -521,7 +521,7 @@ window.podgladWiadomosciKosz = async function(id) {
     const k = document.getElementById('poczta-zawartosc');
     if (!k) return;
     k.innerHTML = `
-        <div>
+        <div style="width: 25%; height: 28%; background-color: gray;">
             <p style="margin:5px 0;"><strong>Od:</strong> ${nadawca}</p>
             <p style="margin:5px 0;"><strong>Do:</strong> ${odbiorca}</p>
             <p style="margin:5px 0;"><strong>Temat:</strong> ${data.temat}</p>
@@ -536,29 +536,29 @@ window.wyslijOdpowiedzBaza = async function() {
     if (!mojaSesja || !podgladWiadomoscObj) return;
     const m = podgladWiadomoscObj;
     const t = document.getElementById('t-odp')?.value.trim();
-    if (!t) return alert("Wpisz treść!");
+    if (!t) return alert("Wpisz treść odpowiedzi!");
     const tO = `Odpowiedź: ${m.temat}`;
     await sb.from('wiadomosci').insert([{ nadawca_id: mojaSesja.id, odbiorca_id: m.nadawca_id, temat: tO, tresc: t, priorytet: 'zwykly' }]);
-    alert("Wysłano!");
+    alert("Wysłano odpowiedź!");
     window.zmienSekcje('skrzynka');
 };
 
 window.usunWiadomoscBaza = async function(id) {
-    if (!confirm("Przenieść wiadomość do kosza?")) return;
+    if (!confirm("Usunąć tę wiadomość? Zostanie ona przeniesiona do kosza i usunie się po 7 dniach AUTOMATYCZNIE! Ta opercacja JEST NIE ODWRACALNA!")) return;
     await sb.from('wiadomosci').update({ deleted: true, deleted_at: new Date().toISOString() }).eq('id', id);
     window.zmienSekcje('skrzynka');
 };
 
 window.zglosWiadomoscBaza = async function(id) {
     if (!mojaSesja || !podgladWiadomoscObj) return;
-    if (!confirm("Zgłosić tę wiadomość do Huberta B.?")) return;
+    if (!confirm("Czy napewno chcesz zgłosić tą wiadomość? Ta operacja jest nie odwracalna!")) return;
     const m = podgladWiadomoscObj;
     const { data: mp } = await sb.from('profiles').select('imie, nazwisko').eq('id', mojaSesja.id).single();
     const { data: admin } = await sb.from('profiles').select('id').eq('imie', 'Hubert').eq('nazwisko', 'Bereźnicki').single();
     if (!admin) return alert("Nie znaleziono administratora!");
     const nadawca = m.profiles ? m.profiles.imie + ' ' + m.profiles.nazwisko : 'Nieznany';
     await sb.from('wiadomosci').insert([{ nadawca_id: mojaSesja.id, odbiorca_id: admin.id, temat: 'Zgłoszenie wiadomości', tresc: `Od: ${nadawca}\nDo: ${mp.imie} ${mp.nazwisko}\nTreść: "${m.tresc}"\nZgłaszający: ${mp.imie} ${mp.nazwisko}`, priorytet: 'zwykly' }]);
-    alert("Zgłoszenie wysłane!");
+    alert("Zgłoszono wiadomość prawidłowo!");
 };
 
 window.aktualizujPodgladOdbiorcy = function() {
