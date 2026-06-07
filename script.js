@@ -498,11 +498,14 @@ window.podgladWiadomosci = async function(id) {
         <div>
             <p style="margin:5px 0;"><strong>Od:</strong> ${odKogo}</p>
             <p style="margin:5px 0;"><strong>Temat:</strong> ${data.temat}</p>
-            <div style="background:${bg};padding:15px;border-radius:8px;margin-top:10px;white-space:pre-wrap;">${data.tresc}</div>
+            <hr style="border:none;border-top:1px solid #eee;margin:15px 0;">
+            <div style="background:${bg};padding:15px;border-radius:8px;margin-top:10px;white-space:pre-wrap;">
+                ${data.tresc}
+            </div>
             <hr style="border:none;border-top:1px solid #eee;margin:15px 0;">
             <div id="k-odp" style="display:none;margin-bottom:10px;">
-                <textarea id="t-odp" placeholder="Wpisz treść..." style="width:100%;height:60px;padding:10px;border-radius:6px;border:1px solid #ccc;box-sizing:border-box;"></textarea>
-                <button onclick="window.wyslijOdpowiedzBaza()" style="background:#28a745;color:white;padding:6px 12px;border:none;border-radius:4px;margin-top:5px;cursor:pointer;">Wyślij</button>
+                <textarea id="t-odp" placeholder="Wpisz odpowiedź..." style="width:100%;height:60px;padding:10px;border-radius:6px;border:1px solid #ccc;box-sizing:border-box;"></textarea>
+                <button onclick="window.wyslijOdpowiedzBaza()" style="background:#28a745;color:white;padding:6px 12px;border:none;border-radius:4px;margin-top:5px;cursor:pointer;">Wyślij odpowiedź</button>
             </div>
             <div style="display:flex;gap:5px;">
                 <button onclick="document.getElementById('k-odp').style.display='block'" style="background:#007bff;color:white;padding:8px;border:none;border-radius:4px;flex:1;cursor:pointer;">Odpowiedz</button>
