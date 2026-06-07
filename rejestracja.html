@@ -192,7 +192,7 @@
     <script>
         // Inicjalizacja Supabase
         const SUPABASE_URL = 'https://uvjgmxvfzvweoxeicned.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV2amdteHZmenZ3ZW94ZWljbmVkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDkyOTk5MjksImV4cCI6MjA2NDg3NTkyOX0.5HnAsi5QyoH-FicrTfGJl5EK5sS2gQsXLbT-9PzNnZ4';
+        const SUPABASE_ANON_KEY = 'sb_publishable_hGHRqdmuObIyLnpzVzZiPA_Cslp7V1G';
         
         let sb;
         try {
@@ -212,7 +212,7 @@
                 .replace(/[\u0300-\u036f]/g, "")
                 .replace(/ł/g, "l")
                 .replace(/[^a-z0-9]/g, '');
-            return czysteImie + '.' + czysteNazwisko + '@klasa6b.pl';
+            return czysteImie + czysteNazwisko + '@klasa.com';
         }
 
         document.addEventListener("DOMContentLoaded", () => {
