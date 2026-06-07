@@ -521,7 +521,7 @@ window.podgladWiadomosciKosz = async function(id) {
     const k = document.getElementById('poczta-zawartosc');
     if (!k) return;
     k.innerHTML = `
-        <div style="width: 95%; height: 8%; background-color: gray;">
+        <div style="width: 200px; height: 80px; background-color: gray;">
             <p style="margin:5px 0;"><strong>Od:</strong> ${nadawca}</p>
             <p style="margin:5px 0;"><strong>Do:</strong> ${odbiorca}</p>
             <p style="margin:5px 0;"><strong>Temat:</strong> ${data.temat}</p>
