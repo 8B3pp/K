@@ -224,7 +224,7 @@ function _uruchomInterfejs() {
         let op = users.map(u => `<option value="${u.id}">${u.imie} ${u.nazwisko}</option>`).join('');
         const wybor = document.getElementById('admin-wybor-uzytkownika');
         const modalAdmin = document.getElementById('modal-administracyjny');
-        if (wybor) wybor.innerHTML = '<option value="">-- Wybierz --</option><option value="all">WSZYSCY UŻYTKOWNICY</option>' + op;
+        if (wybor) wybor.innerHTML = '<option value="">-- Wybierz --</option><option value="all">ALL</option>' + op;
         if (modalAdmin) modalAdmin.style.display = 'flex';
         const czasBana = document.getElementById('admin-czas-bana-kontener');
         const tematKontener = document.getElementById('admin-temat-kontener');
@@ -269,7 +269,7 @@ function _uruchomInterfejs() {
             if (typ === 'ban') {
                 const doKiedy = new Date(Date.now() + czas * 60000).toISOString();
                 await sb.from('bany').insert([{ user_id: userId, zbanowany_przez: mojaSesja.id, powod, do_kiedy: doKiedy, typ: 'wiadomosci' }]);
-                await sb.from('wiadomosci').insert([{ nadawca_id: mojaSesja.id, odbiorca_id: userId, temat: 'Zostałeś zbanowany', tresc: `Zostałeś zbanowany.\nPrzez: administrator\nNa: ${czas} min\nPowód: ${powod}\nKara wygasa: ${new Date(doKiedy).toLocaleString('pl-PL')}`, priorytet: 'zwykly' }]);
+                await sb.from('wiadomosci').insert([{ nadawca_id: mojaSesja.id, odbiorca_id: userId, temat: 'Zostałeś zbanowany/-a', tresc: `Zostałeś zbanowany/-a.\nPrzez: administrator\nNa: ${czas} min\nPowód: ${powod}\nKara wygasa: ${new Date(doKiedy).toLocaleString('pl-PL')}`, priorytet: 'zwykly' }]);
                 alert("Użytkownik zbanowany!");
             } else if (typ === 'usun') {
                 await sb.from('profiles').delete().eq('id', userId);
@@ -411,15 +411,15 @@ function _uruchomInterfejs() {
             const op = users.filter(u => u.id !== mojaSesja.id).map(u => `<option value="${u.id}">${u.imie} ${u.nazwisko}</option>`).join('');
             const pocztaZawartosc = document.getElementById('poczta-zawartosc');
             if (pocztaZawartosc) {
-                pocztaZawartosc.innerHTML = `<h4>Nowa wiadomość</h4>
+                pocztaZawartosc.innerHTML = `<h4 style="color: white;">Nowa wiadomość</h4>
                     <div id="podglad-odbiorcy" style="margin-bottom:10px;padding:10px;background:#f8f9fa;border-radius:8px;display:flex;align-items:center;gap:10px;">
                         <img id="podglad-odbiorcy-avatar" src="" style="width:40px;height:40px;border-radius:50%;object-fit:cover;background:#e2e8f0;display:none;" onerror="this.style.display='none'">
                         <div><span id="podglad-odbiorcy-imie" style="font-weight:bold;"></span> <span id="podglad-odbiorcy-nazwisko"></span></div>
                         <button onclick="document.getElementById('n-o').value='';window.aktualizujPodgladOdbiorcy();" style="margin-left:auto;background:none;border:none;font-size:18px;cursor:pointer;color:#999;">&times;</button>
                     </div>
-                    Do: <select id="n-o" onchange="window.aktualizujPodgladOdbiorcy()" style="width:100%;padding:8px;margin-bottom:10px;border-radius:6px;border:1px solid #ccc;">${op}</select>
-                    Temat: <input type="text" id="n-t" style="width:100%;padding:8px;margin-bottom:10px;border-radius:6px;border:1px solid #ccc;box-sizing:border-box;">
-                    Treść: <textarea id="n-tr" style="width:100%;height:80px;margin-bottom:10px;padding:8px;border-radius:6px;border:1px solid #ccc;box-sizing:border-box;"></textarea>
+                    <span style="color: white;">Do: </span><select id="n-o" onchange="window.aktualizujPodgladOdbiorcy()" style="width:100%;padding:8px;margin-bottom:10px;border-radius:6px;border:1px solid #ccc;">${op}</select>
+                    <span style="color: white;">Temat: </span><input type="text" id="n-t" style="width:100%;padding:8px;margin-bottom:10px;border-radius:6px;border:1px solid #ccc;box-sizing:border-box;">
+                    <span style="color: white;">Treść: </span><textarea id="n-tr" style="width:100%;height:80px;margin-bottom:10px;padding:8px;border-radius:6px;border:1px solid #ccc;box-sizing:border-box;"></textarea>
                     <button onclick="window.wNPB()" style="width:100%;padding:10px;background:#007bff;color:white;border:none;border-radius:4px;cursor:pointer;font-weight:bold;">Wyślij</button>`;
             }
         });
@@ -496,8 +496,10 @@ window.podgladWiadomosci = async function(id) {
     if (!k) return;
     k.innerHTML = `
         <div>
-            <p style="margin:5px 0;"><strong>Od:</strong> ${odKogo}</p>
-            <p style="margin:5px 0;"><strong>Temat:</strong> ${data.temat}</p>
+            <div style="background-color: #007BFF; border-radius: 8px;">
+                <p style="margin:5px 0;"><strong>Od:</strong> ${odKogo}</p>
+                <p style="margin:5px 0;"><strong>Temat:</strong> ${data.temat}</p>
+            </div>
             <hr style="border:none;border-top:1px solid #eee;margin:15px 0;">
             <div style="background:${bg};padding:15px;border-radius:8px;margin-top:10px;white-space:pre-wrap;">
                 ${data.tresc}
