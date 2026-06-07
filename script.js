@@ -522,7 +522,7 @@ window.podgladWiadomosciKosz = async function(id) {
     if (!k) return;
     k.innerHTML = `
         <div>
-            <div style="background-color: #007BFF; border-top-left-radius: 20px; border-bottom-right-radius: 20px; border-bottom-left-radius: 80px; border-top-right-radius: 80px;">
+            <div style="background-color: #007BFF; border-radius: 20px 80px 20px 80px;">
                 <p style="margin:5px 0;"><strong>Od:</strong> ${nadawca}</p>
                 <p style="margin:5px 0;"><strong>Do:</strong> ${odbiorca}</p>
                 <p style="margin:5px 0;"><strong>Temat:</strong> ${data.temat}</p>
