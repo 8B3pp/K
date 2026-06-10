@@ -496,7 +496,7 @@ window.podgladWiadomosci = async function(id) {
     if (!k) return;
     k.innerHTML = `
         <div>
-            <div style="background-color: #007BFF; border-radius: 8px;">
+            <div style="background-color: white; border-radius: 8px;">
                 <p style="margin:5px 0;"><strong>Od:</strong> ${odKogo}</p>
                 <p style="margin:5px 0;"><strong>Temat:</strong> ${data.temat}</p>
             </div>
