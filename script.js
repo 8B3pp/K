@@ -527,12 +527,13 @@ window.podgladWiadomosciKosz = async function(id) {
     if (!k) return;
     k.innerHTML = `
         <div>
-            <div style="background-color: #007BFF; border-radius: 8px;">
+            <div style="background-color: white; border-radius: 8px;">
                 <p style="margin:5px 0;"><strong>Od:</strong> ${nadawca}</p>
                 <p style="margin:5px 0;"><strong>Do:</strong> ${odbiorca}</p>
                 <p style="margin:5px 0;"><strong>Temat:</strong> ${data.temat}</p>
                 <p style="margin:5px 0;font-size:11px;color:#999;">Usunięta: ${new Date(data.deleted_at).toLocaleString('pl-PL')}</p>
             </div>
+            <hr style="border:none;border-top:1px solid #eee;margin:15px 0;">
             <div style="background:#f5f5f5;padding:15px;border-radius:8px;margin-top:10px;white-space:pre-wrap;">
                 ${data.tresc}
             </div>
@@ -618,7 +619,7 @@ window.otworzPodgladElementu = async function(id) {
 
     const trescPodgladu = document.getElementById('tresc-podgladu');
     if (trescPodgladu) {
-        trescPodgladu.innerHTML = `<h3 style="text-transform:capitalize;margin-top:0;">${data.typ}</h3><p style="font-size:12px;color:white;margin:5px 0;">Nadał: ${n} (${dUtw})</p><p style="font-size:12px;color:white;margin:5px 0;">Termin: ${data.data_wydarzenia}</p><p style="color:${c};font-size:12px;margin:5px 0;"><strong>Priorytet:</strong> ${data.priorytet.toUpperCase()}</p><hr style="border:none;border-top:1px solid #eee;margin:15px 0;">${tH}${pS}${przyciskiAdmina}`;
+        trescPodgladu.innerHTML = `<h3 style="text-transform:capitalize;margin-top:0;color:white;">${data.typ}</h3><p style="font-size:12px;color:white;margin:5px 0;">Nadał: ${n} (${dUtw})</p><p style="font-size:12px;color:white;margin:5px 0;">Termin: ${data.data_wydarzenia}</p><p style="color:${c};font-size:12px;margin:5px 0;"><strong>Priorytet:</strong> ${data.priorytet.toUpperCase()}</p><hr style="border:none;border-top:1px solid #eee;margin:15px 0;">${tH}${pS}${przyciskiAdmina}`;
     }
     const modalPodgladu = document.getElementById('modal-podgladu');
     if (modalPodgladu) modalPodgladu.style.display = 'flex';
