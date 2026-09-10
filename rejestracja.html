@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terminarz - 7B (Rejestracja)</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background-color: #0D1B2A;
+            font-family: 'Segoe UI', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .sceny { position: relative; width: 100%; max-width: 440px; min-height: 560px; }
+        .karta {
+            background: #162447;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            padding: 30px;
+            width: 100%;
+            min-height: 560px;
+            max-height: 80vh;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: absolute;
+            top: 0; left: 0;
+            transition: transform .55s cubic-bezier(.25,.8,.3,1), opacity .55s ease;
+        }
+        .karta.aktywna { position: relative; transform: translateX(0); opacity: 1; }
+        .karta.wyjazd-lewo { transform: translateX(-120%); opacity: 0; pointer-events: none; }
+        .karta.wjazd-prawo { transform: translateX(120%); opacity: 0; }
+        .karta.ukryta { display: none; }
+
+        h1, h2 { text-align: center; color: #FFFFFF; margin-bottom: 18px; }
+        h3 { margin: 12px 0; color: #E0E6ED; text-align: center; font-weight: 500; }
+        p { margin: 10px 0; color: #CBD5E1; font-size: 14px; line-height: 1.55; text-align: center; }
+        hr { border: none; border-top: 1px solid rgba(255, 255, 255, 0.15); margin: 16px 0; }
+        label { display: block; margin-bottom: 5px; color: #CBD5E1; font-size: 14px; }
+        input { width: 100%; padding: 12px; background: #1C3A5C; border: 2px solid rgba(255, 255, 255, 0.1); border-radius: 8px; font-size: 15px; color: #FFFFFF; margin-bottom: 15px; }
+        input::placeholder { color: rgba(255, 255, 255, 0.4); }
+        input:focus { outline: none; border-color: #38BDF8; box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15); background: #1F4270; }
+        button.btn { width: 100%; padding: 14px; background: #007bff; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 8px; }
+        button.btn:hover { background: #0056b3; }
+        button.btn-wtorny { background: rgba(255,255,255,0.08); }
+        button.btn-wtorny:hover { background: rgba(255,255,255,0.15); }
+        .blad { color: #ff8080; font-size: 13px; text-align: center; margin-top: -6px; margin-bottom: 10px; display: none; }
+        .info-hasla { background: rgba(56,189,248,0.08); border: 1px solid rgba(56,189,248,0.3); border-radius: 8px; padding: 12px; font-size: 12.5px; color: #CBD5E1; text-align:left; line-height:1.6; margin-bottom: 15px; }
+        .avatar-podglad { width: 96px; height: 96px; border-radius: 50%; margin: 0 auto 16px; background: #1C3A5C; display: flex; align-items: center; justify-content: center; color: #94A3B8; font-size: 13px; overflow: hidden; }
+        .avatar-podglad img { width: 100%; height: 100%; object-fit: cover; }
+        .galeria { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; max-height: 180px; overflow-y: auto; margin-bottom: 12px; }
+        .galeria img { width: 100%; aspect-ratio: 1; border-radius: 50%; cursor: pointer; border: 2px solid transparent; object-fit: cover; background:#1C3A5C; }
+        .galeria img:hover { border-color: #38BDF8; }
+        .galeria img.wybrany { border-color: #28a745; }
+        .spinner { width: 40px; height: 40px; border-radius: 50%; border: 4px solid rgba(255,255,255,0.15); border-top-color: #38BDF8; animation: kreci .8s linear infinite; margin: 10px auto; }
+        @keyframes kreci { to { transform: rotate(360deg); } }
+        .przygotowanie-krok { color: #94A3B8; font-size: 12px; text-align: center; margin-top: 4px; min-height: 16px; }
+    </style>
+</head>
+<body>
+    <div class="sceny" id="sceny">
+
+        <!-- KARTA 0: LANDING -->
+        <div class="karta aktywna" id="karta-landing">
+            <h1>Witaj!</h1>
+            <hr>
+            <h3>Aby korzystać z Terminarza 7B musisz się zarejestrować.</h3>
+            <p style="margin-top: 20px; font-weight: 700; color:#fff;">Do czego służy Terminarz 7B?</p>
+            <p>1. Łatwe sprawdzanie informacji zamiast latania po całej grupie klasowej.</p>
+            <p>2. Łatwe dodawanie informacji dla administracji grupy klasowej.</p>
+            <hr>
+            <button class="btn" id="btn-start-rejestracja">Zarejestruj się!</button>
+            <p style="margin-top: 16px;">Masz już konto? <a href="logowanie.html" style="color:#38BDF8;">Zaloguj się</a></p>
+        </div>
+
+        <!-- KARTA 1: WITAMY / WYJAŚNIENIE -->
+        <div class="karta ukryta" id="karta-krok0">
+            <h2>Zanim zaczniemy</h2>
+            <p>Terminarz 7B to miejsce, w którym cała klasa widzi sprawdziany, kartkówki i ważne ogłoszenia w jednym miejscu — bez pytania wszystkich po kolei.</p>
+            <p>Rejestracja zajmie mniej niż minutę: podasz imię i nazwisko, hasło do konta oraz (opcjonalnie) zdjęcie profilowe.</p>
+            <button class="btn" id="btn-dalej-krok0">Dalej</button>
+        </div>
+
+        <!-- KARTA 2: IMIĘ I NAZWISKO -->
+        <div class="karta ukryta" id="karta-krok1">
+            <h2>Jak masz na imię?</h2>
+            <div><label for="reg-imie">Imię</label><input type="text" id="reg-imie" placeholder="Wpisz swoje prawdziwe imię!"></div>
+            <div><label for="reg-nazwisko">Nazwisko</label><input type="text" id="reg-nazwisko" placeholder="Wpisz swoje prawdziwe nazwisko!"></div>
+            <div class="blad" id="blad-krok1"></div>
+            <button class="btn" id="btn-dalej-krok1">Dalej</button>
+            <button class="btn btn-wtorny" id="btn-wroc-krok1">Wróć</button>
+        </div>
+
+        <!-- KARTA 3: HASŁO -->
+        <div class="karta ukryta" id="karta-krok2">
+            <h2>Wybierz hasło</h2>
+            <div class="info-hasla">🔒 Hasła są szyfrowane — nikt, nawet administrator, nie ma do nich dostępu, a ich odszyfrowanie jest niemożliwe. Będzie Ci ono potrzebne wyłącznie do logowania na własne konto.</div>
+            <div><label for="reg-password">Hasło (min. 6 znaków)</label><input type="password" id="reg-password" placeholder="Dowolne, zapamiętaj je!"></div>
+            <div class="blad" id="blad-krok2"></div>
+            <button class="btn" id="btn-dalej-krok2">Dalej</button>
+            <button class="btn btn-wtorny" id="btn-wroc-krok2">Wróć</button>
+        </div>
+
+        <!-- KARTA 4: AWATAR -->
+        <div class="karta ukryta" id="karta-krok3">
+            <h2>Zdjęcie profilowe</h2>
+            <div class="avatar-podglad" id="avatar-podglad">Brak zdjęcia</div>
+            <input type="file" id="reg-plik-avatar" accept="image/*" style="display:none;">
+            <div style="display:flex; gap:8px; margin-bottom:12px;">
+                <button type="button" class="btn btn-wtorny" style="margin-top:0;" id="btn-avatar-galeria">Wybierz z internetu</button>
+                <button type="button" class="btn btn-wtorny" style="margin-top:0;" id="btn-avatar-plik">Prześlij zdjęcie</button>
+            </div>
+            <div id="avatar-galeria-kontener" style="display:none;">
+                <input type="text" id="avatar-szukaj" placeholder="Wpisz cokolwiek, np. imię — zmieni styl awatarów" style="margin-bottom:10px;">
+                <div class="galeria" id="avatar-galeria"></div>
+            </div>
+            <div class="blad" id="blad-krok3"></div>
+            <button class="btn" id="btn-dalej-krok3">Dalej</button>
+            <button class="btn btn-wtorny" id="btn-wroc-krok3">Wróć</button>
+        </div>
+
+        <!-- KARTA 5: PRZYGOTOWANIE -->
+        <div class="karta ukryta" id="karta-przygotowanie">
+            <div class="spinner"></div>
+            <h3>Przygotowujemy wszystko dla Ciebie…</h3>
+            <div class="przygotowanie-krok" id="przygotowanie-krok">Tworzenie konta…</div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script>
+        const SUPABASE_URL = 'https://uvjgmxvfzvweoxeicned.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_hGHRqdmuObIyLnpzVzZiPA_Cslp7V1G';
+        let sb;
+        try { sb = window.supabaseClient || supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY); window.supabaseClient = sb; }
+        catch (e) { console.error('Błąd inicjalizacji Supabase:', e); }
+
+        function czyscTekst(t) {
+            return t.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/ł/g, "l").replace(/[^a-z0-9]/g, '');
+        }
+        function generujFakeEmail(imie, nazwisko) { return czyscTekst(imie) + czyscTekst(nazwisko) + '@klasa.com'; }
+
+        // Bardzo prosty filtr — łapie najbardziej oczywiste przypadki, nie jest to system doskonały.
+        const LISTA_WULGARYZMOW = ['kurwa','chuj','pierdol','jeban','spierdal','skurwy','huj','dupek','pizda','zjeb'];
+        function zawieraWulgaryzm(t) {
+            const n = czyscTekst(t);
+            return LISTA_WULGARYZMOW.some(w => n.includes(w));
+        }
+
+        const karty = {
+            landing: document.getElementById('karta-landing'),
+            krok0: document.getElementById('karta-krok0'),
+            krok1: document.getElementById('karta-krok1'),
+            krok2: document.getElementById('karta-krok2'),
+            krok3: document.getElementById('karta-krok3'),
+            przygotowanie: document.getElementById('karta-przygotowanie')
+        };
+
+        function pokazKarte(nazwaNowej, kierunek) {
+            const aktualna = document.querySelector('.karta.aktywna');
+            const nowa = karty[nazwaNowej];
+            nowa.classList.remove('ukryta');
+            nowa.style.transition = 'none';
+            nowa.classList.add(kierunek === 'w-przod' ? 'wjazd-prawo' : 'wyjazd-lewo');
+            nowa.classList.remove('aktywna');
+            void nowa.offsetWidth;
+            nowa.style.transition = '';
+            if (aktualna) {
+                aktualna.classList.remove('aktywna');
+                aktualna.classList.add(kierunek === 'w-przod' ? 'wyjazd-lewo' : 'wjazd-prawo');
+            }
+            requestAnimationFrame(() => {
+                nowa.classList.remove('wjazd-prawo', 'wyjazd-lewo');
+                nowa.classList.add('aktywna');
+            });
+            setTimeout(() => { if (aktualna && aktualna !== nowa) aktualna.classList.add('ukryta'); }, 600);
+        }
+
+        document.getElementById('btn-start-rejestracja').addEventListener('click', () => pokazKarte('krok0', 'w-przod'));
+        document.getElementById('btn-dalej-krok0').addEventListener('click', () => pokazKarte('krok1', 'w-przod'));
+        document.getElementById('btn-wroc-krok1').addEventListener('click', () => pokazKarte('krok0', 'w-tyl'));
+        document.getElementById('btn-wroc-krok2').addEventListener('click', () => pokazKarte('krok1', 'w-tyl'));
+        document.getElementById('btn-wroc-krok3').addEventListener('click', () => pokazKarte('krok2', 'w-tyl'));
+
+        let daneRejestracji = { imie: '', nazwisko: '', password: '', avatar_url: null };
+
+        document.getElementById('btn-dalej-krok1').addEventListener('click', () => {
+            const imie = document.getElementById('reg-imie').value.trim();
+            const nazwisko = document.getElementById('reg-nazwisko').value.trim();
+            const blad = document.getElementById('blad-krok1');
+            if (!imie || !nazwisko) { blad.innerText = 'Wypełnij imię i nazwisko!'; blad.style.display = 'block'; return; }
+            if (zawieraWulgaryzm(imie) || zawieraWulgaryzm(nazwisko)) { blad.innerText = 'Imię/nazwisko zawiera niedozwolone słowo. Podaj swoje prawdziwe dane.'; blad.style.display = 'block'; return; }
+            blad.style.display = 'none';
+            daneRejestracji.imie = imie;
+            daneRejestracji.nazwisko = nazwisko;
+            pokazKarte('krok2', 'w-przod');
+        });
+
+        document.getElementById('btn-dalej-krok2').addEventListener('click', () => {
+            const password = document.getElementById('reg-password').value;
+            const blad = document.getElementById('blad-krok2');
+            if (!password || password.length < 6) { blad.innerText = 'Hasło musi mieć minimum 6 znaków!'; blad.style.display = 'block'; return; }
+            blad.style.display = 'none';
+            daneRejestracji.password = password;
+            pokazKarte('krok3', 'w-przod');
+        });
+
+        // Awatar: galeria (dicebear — darmowe, generowane awatary, nie wymaga klucza API)
+        document.getElementById('btn-avatar-galeria').addEventListener('click', () => {
+            const kont = document.getElementById('avatar-galeria-kontener');
+            kont.style.display = kont.style.display === 'none' ? 'block' : 'none';
+            odswiezGalerie('7b');
+        });
+        document.getElementById('avatar-szukaj').addEventListener('input', (e) => odswiezGalerie(e.target.value || '7b'));
+
+        function odswiezGalerie(fraza) {
+            const gal = document.getElementById('avatar-galeria');
+            gal.innerHTML = '';
+            for (let i = 0; i < 12; i++) {
+                const seed = encodeURIComponent(fraza + '-' + i);
+                const url = `https://api.dicebear.com/7.x/avataaars/svg?seed=${seed}`;
+                const img = document.createElement('img');
+                img.src = url;
+                img.loading = 'lazy';
+                img.addEventListener('click', () => {
+                    document.querySelectorAll('.galeria img').forEach(x => x.classList.remove('wybrany'));
+                    img.classList.add('wybrany');
+                    ustawAvatarPodglad(url);
+                    daneRejestracji.avatar_url = url;
+                });
+                gal.appendChild(img);
+            }
+        }
+
+        document.getElementById('btn-avatar-plik').addEventListener('click', () => document.getElementById('reg-plik-avatar').click());
+        document.getElementById('reg-plik-avatar').addEventListener('change', (e) => {
+            const plik = e.target.files[0];
+            if (!plik) return;
+            if (plik.size > 1.5 * 1024 * 1024) { alert('Zdjęcie jest za duże (max ok. 1.5MB).'); return; }
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                ustawAvatarPodglad(ev.target.result);
+                daneRejestracji.avatar_url = ev.target.result;
+            };
+            reader.readAsDataURL(plik);
+        });
+
+        function ustawAvatarPodglad(src) {
+            const podglad = document.getElementById('avatar-podglad');
+            podglad.innerHTML = `<img src="${src}" onerror="this.parentElement.innerHTML='Błąd zdjęcia'">`;
+        }
+
+        document.getElementById('btn-dalej-krok3').addEventListener('click', () => rozpocznijRejestracje());
+
+        async function rozpocznijRejestracje() {
+            if (!sb) return alert('Błąd połączenia z serwerem. Spróbuj ponownie później.');
+            pokazKarte('przygotowanie', 'w-przod');
+            const krokTekst = document.getElementById('przygotowanie-krok');
+            const czasStartu = Date.now();
+            const MIN_CZAS = 4000;
+
+            const { imie, nazwisko, password, avatar_url } = daneRejestracji;
+            const fakeEmail = generujFakeEmail(imie, nazwisko);
+
+            try {
+                krokTekst.innerText = 'Sprawdzanie danych…';
+                const { data: existingUser } = await sb.from('profiles').select('id').eq('imie', imie).eq('nazwisko', nazwisko).single();
+                if (existingUser) {
+                    await czekajDoMinimum(czasStartu, 0);
+                    pokazKarte('krok1', 'w-tyl');
+                    const blad = document.getElementById('blad-krok1');
+                    blad.innerText = 'Użytkownik o takim imieniu i nazwisku już istnieje!';
+                    blad.style.display = 'block';
+                    return;
+                }
+
+                krokTekst.innerText = 'Tworzenie konta…';
+                const { data, error } = await sb.auth.signUp({
+                    email: fakeEmail, password,
+                    options: { data: { imie, nazwisko } }
+                });
+                if (error) {
+                    await czekajDoMinimum(czasStartu, 0);
+                    pokazKarte('krok2', 'w-tyl');
+                    const blad = document.getElementById('blad-krok2');
+                    blad.innerText = 'Błąd rejestracji: ' + error.message;
+                    blad.style.display = 'block';
+                    return;
+                }
+
+                if (data.user) {
+                    krokTekst.innerText = 'Zapisywanie profilu…';
+                    await sb.from('profiles').insert([{ id: data.user.id, imie, nazwisko, avatar_url: avatar_url || null }]);
+
+                    krokTekst.innerText = 'Wysyłanie wiadomości powitalnej…';
+                    try {
+                        const { data: users } = await sb.from('profiles').select('id, imie, nazwisko');
+                        const LISTA_ADMINOW = ["Hubert_Bereźnicki", "Ewa_Pachana", "iwo_nowacki"];
+                        const norm = (t) => (t||'').trim().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/ł/g,"l").toLowerCase();
+                        const admin = (users || []).find(u => LISTA_ADMINOW.some(a => norm(a.replace('_',' ')) === norm(u.imie + ' ' + u.nazwisko)));
+                        if (admin) {
+                            await sb.from('wiadomosci').insert([{
+                                nadawca_id: admin.id,
+                                odbiorca_id: data.user.id,
+                                temat: 'Witamy w terminarzu 7B!',
+                                tresc: `Witaj ${imie}! To jest automatyczna wiadomość, witamy cię w terminarzu 7B, który jest najbardziej pomocnym projektem w naszej klasie.\n\nRegulamin:\n1. Nie przeklinaj do innych w wiadomości i nie spamuj, wszystko jest zapisywane a zgłoszenie dla drugiej osoby to nie problem\n2. Nie zgłaszaj każdej osoby\n3. Regularnie sprawdzaj terminarz\n\nŻyczę miłego korzystania! (By Hubert B. 7B)`,
+                                priorytet: 'zwykly'
+                            }]);
+                        }
+                    } catch (e) { console.log('Wiadomość powitalna pominięta:', e); }
+
+                    krokTekst.innerText = 'Gotowe!';
+                    await czekajDoMinimum(czasStartu, MIN_CZAS);
+                    window.location.href = 'index.html';
+                }
+            } catch (err) {
+                console.error('Nieoczekiwany błąd:', err);
+                await czekajDoMinimum(czasStartu, 0);
+                pokazKarte('krok3', 'w-tyl');
+                const blad = document.getElementById('blad-krok3');
+                blad.innerText = 'Wystąpił nieoczekiwany błąd. Spróbuj ponownie.';
+                blad.style.display = 'block';
+            }
+        }
+
+        function czekajDoMinimum(czasStartu, minCzas) {
+            const uplynelo = Date.now() - czasStartu;
+            const doPoczekania = Math.max(0, minCzas - uplynelo);
+            return new Promise(res => setTimeout(res, doPoczekania));
+        }
+    </script>
+</body>
+</html>

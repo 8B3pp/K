@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terminarz - 7B (Logowanie)</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background-color: #0D1B2A;
+            font-family: 'Segoe UI', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .sceny { position: relative; width: 100%; max-width: 400px; min-height: 520px; }
+        .karta {
+            background: #162447;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            padding: 30px;
+            width: 100%;
+            min-height: 520px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: absolute;
+            top: 0; left: 0;
+            transition: transform .55s cubic-bezier(.25,.8,.3,1), opacity .55s ease;
+        }
+        .karta.aktywna { position: relative; transform: translateX(0); opacity: 1; }
+        .karta.wyjazd-lewo { transform: translateX(-120%); opacity: 0; pointer-events: none; }
+        .karta.wjazd-prawo { transform: translateX(120%); opacity: 0; }
+        .karta.ukryta { display: none; }
+
+        h1, h2 { text-align: center; color: #FFFFFF; margin-bottom: 20px; }
+        h3 { margin: 12px 0; color: #E0E6ED; text-align: center; font-weight: 500; }
+        p { margin: 10px 0; color: #CBD5E1; font-size: 14px; line-height: 1.5; text-align: center; }
+        hr { border: none; border-top: 1px solid rgba(255, 255, 255, 0.15); margin: 18px 0; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; color: #CBD5E1; font-size: 14px; font-weight: 500; }
+        .form-group input {
+            width: 100%; padding: 12px; background: #1C3A5C;
+            border: 2px solid rgba(255, 255, 255, 0.1); border-radius: 8px;
+            font-size: 15px; color: #FFFFFF; transition: all 0.3s;
+        }
+        .form-group input::placeholder { color: rgba(255, 255, 255, 0.4); }
+        .form-group input:focus { border-color: #38BDF8; outline: none; box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15); background: #1F4270; }
+        .btn {
+            width: 100%; padding: 14px; background: #28a745; color: white; border: none;
+            border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer;
+            margin: 10px 0 0; transition: all 0.2s;
+        }
+        .btn:hover { background: #218838; transform: translateY(-1px); }
+        .btn:disabled { opacity: .6; cursor: default; transform:none; }
+        .btn-wtorny { background: rgba(255,255,255,0.08); }
+        .btn-wtorny:hover { background: rgba(255,255,255,0.15); }
+        .footer-note { margin-top: 15px; font-size: 12px; color: #94A3B8; text-align: center; }
+        .blad { color: #ff8080; font-size: 13px; text-align: center; margin-top: -6px; margin-bottom: 10px; display: none; }
+        .spinner { width: 34px; height: 34px; border-radius: 50%; border: 4px solid rgba(255,255,255,0.15); border-top-color: #38BDF8; animation: kreci .8s linear infinite; margin: 20px auto; }
+        @keyframes kreci { to { transform: rotate(360deg); } }
+        .kropki { text-align:center; color:#94A3B8; font-size:12px; margin-top:6px; }
+    </style>
+</head>
+<body>
+    <div class="sceny" id="sceny">
+
+        <!-- KARTA 0: LANDING -->
+        <div class="karta aktywna" id="karta-landing">
+            <h1>Witaj z powrotem!</h1>
+            <hr>
+            <h3>Aby korzystać z Terminarza 7B musisz się zalogować.</h3>
+            <p>Jeżeli jesteś nowy i nie masz jeszcze konta — wybierz „Zarejestruj się”. Jeśli masz już konto, wybierz „Zaloguj się”.</p>
+            <hr>
+            <button class="btn" id="btn-idz-logowanie">Zaloguj się</button>
+            <button class="btn btn-wtorny" id="btn-idz-rejestracja" style="margin-top:10px;">Zarejestruj się</button>
+            <p class="footer-note">Created by Hubert B. 7B</p>
+        </div>
+
+        <!-- KARTA 1: IMIĘ + NAZWISKO -->
+        <div class="karta ukryta" id="karta-krok1">
+            <h2>Zaloguj się</h2>
+            <hr>
+            <div class="form-group">
+                <label for="login-imie">Imię</label>
+                <input type="text" id="login-imie" placeholder="Wpisz imię">
+            </div>
+            <div class="form-group">
+                <label for="login-nazwisko">Nazwisko</label>
+                <input type="text" id="login-nazwisko" placeholder="Wpisz nazwisko">
+            </div>
+            <div class="blad" id="blad-krok1"></div>
+            <button class="btn" id="btn-dalej-krok1">Dalej</button>
+            <button class="btn btn-wtorny" id="btn-wroc-krok1" style="margin-top:10px;">Wróć</button>
+        </div>
+
+        <!-- KARTA 2: HASŁO -->
+        <div class="karta ukryta" id="karta-krok2">
+            <h2>Podaj hasło</h2>
+            <hr>
+            <div class="form-group">
+                <label for="login-password">Hasło</label>
+                <input type="password" id="login-password" placeholder="Twoje hasło">
+            </div>
+            <div class="blad" id="blad-krok2"></div>
+            <button class="btn" id="btn-zaloguj">Zaloguj się</button>
+            <button class="btn btn-wtorny" id="btn-wroc-krok2" style="margin-top:10px;">Wróć</button>
+        </div>
+
+        <!-- KARTA 3: ŁADOWANIE -->
+        <div class="karta ukryta" id="karta-ladowanie">
+            <div class="spinner"></div>
+            <h3 id="ladowanie-tekst">Logowanie…</h3>
+            <div class="kropki">To potrwa tylko chwilę</div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script>
+        const SUPABASE_URL = 'https://uvjgmxvfzvweoxeicned.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_hGHRqdmuObIyLnpzVzZiPA_Cslp7V1G';
+        let sb;
+        if (typeof window.supabaseClient === 'undefined') {
+            sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            window.supabaseClient = sb;
+        } else {
+            sb = window.supabaseClient;
+        }
+
+        function generujFakeEmail(imie, nazwisko) {
+            const czysc = (t) => t.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/ł/g, "l").replace(/[^a-z0-9]/g, '');
+            return czysc(imie) + czysc(nazwisko) + '@klasa.com';
+        }
+
+        const karty = {
+            landing: document.getElementById('karta-landing'),
+            krok1: document.getElementById('karta-krok1'),
+            krok2: document.getElementById('karta-krok2'),
+            ladowanie: document.getElementById('karta-ladowanie')
+        };
+
+        function pokazKarte(nazwaNowej, kierunek) {
+            const aktualna = document.querySelector('.karta.aktywna');
+            const nowa = karty[nazwaNowej];
+            nowa.classList.remove('ukryta');
+            nowa.style.transition = 'none';
+            nowa.classList.add(kierunek === 'w-przod' ? 'wjazd-prawo' : 'wyjazd-lewo');
+            nowa.classList.remove('aktywna');
+            void nowa.offsetWidth;
+            nowa.style.transition = '';
+            if (aktualna) {
+                aktualna.classList.remove('aktywna');
+                aktualna.classList.add(kierunek === 'w-przod' ? 'wyjazd-lewo' : 'wjazd-prawo');
+            }
+            requestAnimationFrame(() => {
+                nowa.classList.remove('wjazd-prawo', 'wyjazd-lewo');
+                nowa.classList.add('aktywna');
+            });
+            setTimeout(() => { if (aktualna && aktualna !== nowa) aktualna.classList.add('ukryta'); }, 600);
+        }
+
+        document.getElementById('btn-idz-logowanie').addEventListener('click', () => pokazKarte('krok1', 'w-przod'));
+        document.getElementById('btn-idz-rejestracja').addEventListener('click', () => window.location.href = 'rejestracja.html');
+        document.getElementById('btn-wroc-krok1').addEventListener('click', () => pokazKarte('landing', 'w-tyl'));
+        document.getElementById('btn-wroc-krok2').addEventListener('click', () => pokazKarte('krok1', 'w-tyl'));
+
+        document.getElementById('btn-dalej-krok1').addEventListener('click', () => {
+            const imie = document.getElementById('login-imie').value.trim();
+            const nazwisko = document.getElementById('login-nazwisko').value.trim();
+            const blad = document.getElementById('blad-krok1');
+            if (!imie || !nazwisko) {
+                blad.innerText = 'Wypełnij imię i nazwisko!';
+                blad.style.display = 'block';
+                return;
+            }
+            blad.style.display = 'none';
+            pokazKarte('krok2', 'w-przod');
+        });
+
+        document.getElementById('btn-zaloguj').addEventListener('click', async () => {
+            const imie = document.getElementById('login-imie').value.trim();
+            const nazwisko = document.getElementById('login-nazwisko').value.trim();
+            const password = document.getElementById('login-password').value;
+            const blad = document.getElementById('blad-krok2');
+            if (!password) { blad.innerText = 'Wpisz hasło!'; blad.style.display = 'block'; return; }
+            blad.style.display = 'none';
+
+            pokazKarte('ladowanie', 'w-przod');
+            const fakeEmail = generujFakeEmail(imie, nazwisko);
+            try {
+                const { error } = await sb.auth.signInWithPassword({ email: fakeEmail, password });
+                if (error) {
+                    pokazKarte('krok2', 'w-tyl');
+                    blad.innerText = 'Błędne imię, nazwisko lub hasło!';
+                    blad.style.display = 'block';
+                } else {
+                    document.getElementById('ladowanie-tekst').innerText = 'Zalogowano! Przenoszę…';
+                    window.location.href = 'index.html';
+                }
+            } catch (err) {
+                pokazKarte('krok2', 'w-tyl');
+                blad.innerText = 'Wystąpił błąd połączenia. Spróbuj ponownie.';
+                blad.style.display = 'block';
+            }
+        });
+
+        // Logowanie hasłem klawiszem Enter
+        document.getElementById('login-password')?.addEventListener('keyup', (e) => { if (e.key === 'Enter') document.getElementById('btn-zaloguj').click(); });
+        document.getElementById('login-nazwisko')?.addEventListener('keyup', (e) => { if (e.key === 'Enter') document.getElementById('btn-dalej-krok1').click(); });
+    </script>
+</body>
+</html>
