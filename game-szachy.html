@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Szachy — Terminarz 7B</title>
+<style>
+    * { box-sizing: border-box; margin:0; padding:0; }
+    body { background: radial-gradient(ellipse at top, #0D1B2A 0%, #050810 100%); min-height:100vh; font-family:'Segoe UI',sans-serif; overflow-x:hidden; position:relative; }
+    #gwiazdy-tlo { position:fixed; inset:0; pointer-events:none; z-index:0; }
+    .wrap { position:relative; z-index:1; max-width:560px; margin:0 auto; padding:20px; }
+
+    #ladowanie-ekran { position:fixed; inset:0; background:#050810; z-index:500; display:flex; flex-direction:column; align-items:center; justify-content:center; color:#fff; }
+    .spinner { width:44px; height:44px; border-radius:50%; border:4px solid rgba(255,255,255,0.15); border-top-color:#38BDF8; animation:spin .8s linear infinite; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+
+    .info-panel { display:flex; justify-content:space-between; align-items:center; background:rgba(22,36,71,0.7); border:1px solid rgba(56,189,248,0.25); border-radius:14px; padding:14px 18px; margin-bottom:18px; color:#fff; flex-wrap:wrap; gap:10px; font-size:14px; }
+    .info-panel strong { color:#38BDF8; }
+
+    #plansza { display:grid; grid-template-columns: repeat(8, 1fr); border-radius:12px; overflow:hidden; box-shadow:0 0 40px rgba(56,189,248,0.1); border:1px solid rgba(56,189,248,0.25); }
+    .pole { aspect-ratio:1; display:flex; align-items:center; justify-content:center; font-size:min(7vw,34px); cursor:pointer; position:relative; user-select:none; transition:background .15s; }
+    .pole.jasne { background:#EBECD0; }
+    .pole.ciemne { background:#739552; }
+    .pole.zaznaczone { box-shadow: inset 0 0 0 4px #38BDF8; }
+    .pole.cel::after { content:''; position:absolute; width:28%; height:28%; border-radius:50%; background:rgba(56,189,248,0.55); }
+    .pole.cel-bicie { box-shadow: inset 0 0 0 4px rgba(244,67,54,0.8); }
+    .pole.ostatni-ruch { background-color: rgba(255,235,59,0.35) !important; }
+    .pole.krol-szach { background-color: rgba(244,67,54,0.55) !important; }
+    .figura-biala { color:#fff; text-shadow:0 0 3px #000, 0 0 1px #000; }
+    .figura-czarna { color:#000; text-shadow:0 0 3px rgba(255,255,255,0.5); }
+
+    .status { text-align:center; color:#fff; font-size:17px; font-weight:bold; margin-top:16px; min-height:26px; }
+    .zasady { color:#94A3B8; font-size:12px; text-align:center; margin-top:12px; line-height:1.6; }
+
+    .promocja-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:600; display:none; align-items:center; justify-content:center; }
+    .promocja-box { background:#162447; padding:20px; border-radius:14px; display:flex; gap:10px; }
+    .promocja-box button { font-size:32px; background:rgba(255,255,255,0.08); border:none; border-radius:10px; width:60px; height:60px; cursor:pointer; color:#fff; }
+    .promocja-box button:hover { background:rgba(56,189,248,0.3); }
+
+    .koniec-gry { display:none; text-align:center; margin-top:16px; padding:18px; border-radius:14px; background:rgba(40,167,69,0.12); border:1px solid rgba(40,167,69,0.4); }
+    .koniec-gry button { margin-top:10px; padding:10px 20px; background:#28a745; color:white; border:none; border-radius:8px; font-weight:bold; cursor:pointer; }
+</style>
+</head>
+<body>
+<div id="gwiazdy-tlo"></div>
+<div id="ladowanie-ekran"><div class="spinner"></div><p style="margin-top:14px;">Ładowanie…</p></div>
+
+<div class="wrap" id="glowny-widok" style="display:none;">
+    <div id="pasek-gry-kontener"></div>
+    <div class="info-panel">
+        <div>Grasz białymi ♙</div>
+        <div id="tura-info">Twój ruch</div>
+        <div>🏆 Wygrane: <strong id="licznik-punktow">0</strong></div>
+    </div>
+    <div id="plansza"></div>
+    <div class="status" id="status-gry"></div>
+    <div class="zasady">Kliknij figurę, potem pole docelowe. Dostępne są: roszada i promocja pionka. Bicie w przelocie (en passant) nie jest obsługiwane — to jedyne uproszczenie zasad.</div>
+    <div class="koniec-gry" id="ekran-konca">
+        <h2 id="tekst-konca"></h2>
+        <button id="btn-nowa-partia">Nowa partia</button>
+    </div>
+</div>
+
+<div class="promocja-overlay" id="promocja-overlay">
+    <div class="promocja-box" id="promocja-box"></div>
+</div>
+
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+<script src="gry-wspolne.js"></script>
+<script>
+(async function () {
+    const user = await GryWspolne.start();
+    if (!user) return;
+
+    const pozostaloCzasu = await GryWspolne.pobierzPozostalyCzas();
+    if (pozostaloCzasu <= 0) { GryWspolne.pokazBlokadeLimitu(); return; }
+
+    document.getElementById('ladowanie-ekran').style.display = 'none';
+    document.getElementById('glowny-widok').style.display = 'block';
+    GryWspolne.renderujPasekGory('♟️ Szachy', 'pasek-gry-kontener');
+    GryWspolne.stworzGwiazdy(document.getElementById('gwiazdy-tlo'), 70);
+    GryWspolne.aktualizujPasekCzasu(pozostaloCzasu);
+    GryWspolne.uruchomZegar(() => GryWspolne.pokazBlokadeLimitu());
+
+    const postep = await GryWspolne.pobierzPostep('szachy');
+    document.getElementById('licznik-punktow').innerText = postep.punkty;
+
+    // ========================= SILNIK SZACHOWY =========================
+    const SYMBOLE = {
+        P: '♙', N: '♘', B: '♗', R: '♖', Q: '♕', K: '♔',
+        p: '♟', n: '♞', b: '♝', r: '♜', q: '♛', k: '♚'
+    };
+    const WARTOSCI = { p: 100, n: 320, b: 330, r: 500, q: 900, k: 20000 };
+
+    function nowaPlansza() {
+        return [
+            ['r','n','b','q','k','b','n','r'],
+            ['p','p','p','p','p','p','p','p'],
+            ['','','','','','','',''],
+            ['','','','','','','',''],
+            ['','','','','','','',''],
+            ['','','','','','','',''],
+            ['P','P','P','P','P','P','P','P'],
+            ['R','N','B','Q','K','B','N','R']
+        ];
+    }
+
+    let stan = {
+        plansza: nowaPlansza(),
+        tura: 'w',
+        roszada: { wK: true, wQ: true, bK: true, bQ: true },
+        ostatniRuch: null
+    };
+
+    function jestBiala(f) { return f && f === f.toUpperCase() && f !== ''; }
+    function jestCzarna(f) { return f && f === f.toLowerCase() && f !== ''; }
+    function kolorFigury(f) { return jestBiala(f) ? 'w' : (jestCzarna(f) ? 'b' : null); }
+    function wGranicach(r, c) { return r >= 0 && r < 8 && c >= 0 && c < 8; }
+    function klonujPlansze(pl) { return pl.map(w => w.slice()); }
+
+    function ruchyPionka(pl, r, c, kolor) {
+        const ruchy = [];
+        const kierunek = kolor === 'w' ? -1 : 1;
+        const startRow = kolor === 'w' ? 6 : 1;
+        const promRow = kolor === 'w' ? 0 : 7;
+        if (wGranicach(r + kierunek, c) && pl[r + kierunek][c] === '') {
+            dodajZPromocja(ruchy, r, c, r + kierunek, c, promRow);
+            if (r === startRow && pl[r + 2 * kierunek][c] === '') {
+                ruchy.push({ fr: r, fc: c, tr: r + 2 * kierunek, tc: c });
+            }
+        }
+        for (const dc of [-1, 1]) {
+            const nr = r + kierunek, nc = c + dc;
+            if (wGranicach(nr, nc) && pl[nr][nc] !== '' && kolorFigury(pl[nr][nc]) !== kolor) {
+                dodajZPromocja(ruchy, r, c, nr, nc, promRow);
+            }
+        }
+        return ruchy;
+    }
+    function dodajZPromocja(ruchy, fr, fc, tr, tc, promRow) {
+        if (tr === promRow) {
+            ['q', 'r', 'b', 'n'].forEach(p => ruchy.push({ fr, fc, tr, tc, promocja: p }));
+        } else {
+            ruchy.push({ fr, fc, tr, tc });
+        }
+    }
+
+    const KIERUNKI_SKOCZEK = [[-2,-1],[-2,1],[-1,-2],[-1,2],[1,-2],[1,2],[2,-1],[2,1]];
+    const KIERUNKI_KROL = [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]];
+    const KIERUNKI_WIEZA = [[-1,0],[1,0],[0,-1],[0,1]];
+    const KIERUNKI_GONIEC = [[-1,-1],[-1,1],[1,-1],[1,1]];
+
+    function ruchySkokowe(pl, r, c, kolor, kierunki) {
+        const ruchy = [];
+        for (const [dr, dc] of kierunki) {
+            const nr = r + dr, nc = c + dc;
+            if (wGranicach(nr, nc) && kolorFigury(pl[nr][nc]) !== kolor) ruchy.push({ fr: r, fc: c, tr: nr, tc: nc });
+        }
+        return ruchy;
+    }
+    function ruchyLiniowe(pl, r, c, kolor, kierunki) {
+        const ruchy = [];
+        for (const [dr, dc] of kierunki) {
+            let nr = r + dr, nc = c + dc;
+            while (wGranicach(nr, nc)) {
+                if (pl[nr][nc] === '') { ruchy.push({ fr: r, fc: c, tr: nr, tc: nc }); }
+                else { if (kolorFigury(pl[nr][nc]) !== kolor) ruchy.push({ fr: r, fc: c, tr: nr, tc: nc }); break; }
+                nr += dr; nc += dc;
+            }
+        }
+        return ruchy;
+    }
+
+    function czyPoleAtakowane(pl, r, c, przezKolor) {
+        // piony
+        const kierunek = przezKolor === 'w' ? 1 : -1;
+        for (const dc of [-1, 1]) {
+            const nr = r + kierunek, nc = c + dc;
+            if (wGranicach(nr, nc) && pl[nr][nc] !== '' && kolorFigury(pl[nr][nc]) === przezKolor && pl[nr][nc].toLowerCase() === 'p') return true;
+        }
+        for (const [dr, dc] of KIERUNKI_SKOCZEK) {
+            const nr = r + dr, nc = c + dc;
+            if (wGranicach(nr, nc) && pl[nr][nc] !== '' && kolorFigury(pl[nr][nc]) === przezKolor && pl[nr][nc].toLowerCase() === 'n') return true;
+        }
+        for (const [dr, dc] of KIERUNKI_KROL) {
+            const nr = r + dr, nc = c + dc;
+            if (wGranicach(nr, nc) && pl[nr][nc] !== '' && kolorFigury(pl[nr][nc]) === przezKolor && pl[nr][nc].toLowerCase() === 'k') return true;
+        }
+        for (const [dr, dc] of KIERUNKI_WIEZA) {
+            let nr = r + dr, nc = c + dc;
+            while (wGranicach(nr, nc)) {
+                if (pl[nr][nc] !== '') {
+                    if (kolorFigury(pl[nr][nc]) === przezKolor && (pl[nr][nc].toLowerCase() === 'r' || pl[nr][nc].toLowerCase() === 'q')) return true;
+                    break;
+                }
+                nr += dr; nc += dc;
+            }
+        }
+        for (const [dr, dc] of KIERUNKI_GONIEC) {
+            let nr = r + dr, nc = c + dc;
+            while (wGranicach(nr, nc)) {
+                if (pl[nr][nc] !== '') {
+                    if (kolorFigury(pl[nr][nc]) === przezKolor && (pl[nr][nc].toLowerCase() === 'b' || pl[nr][nc].toLowerCase() === 'q')) return true;
+                    break;
+                }
+                nr += dr; nc += dc;
+            }
+        }
+        return false;
+    }
+
+    function znajdzKrola(pl, kolor) {
+        const symbol = kolor === 'w' ? 'K' : 'k';
+        for (let r = 0; r < 8; r++) for (let c = 0; c < 8; c++) if (pl[r][c] === symbol) return { r, c };
+        return null;
+    }
+    function jestSzach(pl, kolor) {
+        const k = znajdzKrola(pl, kolor);
+        if (!k) return false;
+        return czyPoleAtakowane(pl, k.r, k.c, kolor === 'w' ? 'b' : 'w');
+    }
+
+    function pseudoRuchyFigury(pl, r, c) {
+        const f = pl[r][c];
+        if (f === '') return [];
+        const kolor = kolorFigury(f);
+        const typ = f.toLowerCase();
+        if (typ === 'p') return ruchyPionka(pl, r, c, kolor);
+        if (typ === 'n') return ruchySkokowe(pl, r, c, kolor, KIERUNKI_SKOCZEK);
+        if (typ === 'k') return ruchySkokowe(pl, r, c, kolor, KIERUNKI_KROL);
+        if (typ === 'r') return ruchyLiniowe(pl, r, c, kolor, KIERUNKI_WIEZA);
+        if (typ === 'b') return ruchyLiniowe(pl, r, c, kolor, KIERUNKI_GONIEC);
+        if (typ === 'q') return ruchyLiniowe(pl, r, c, kolor, KIERUNKI_WIEZA.concat(KIERUNKI_GONIEC));
+        return [];
+    }
+
+    function dodajRoszade(pl, kolor, prawa, ruchy) {
+        const rzad = kolor === 'w' ? 7 : 0;
+        const przeciwnik = kolor === 'w' ? 'b' : 'w';
+        if (jestSzach(pl, kolor)) return;
+        const kKey = kolor === 'w' ? 'wK' : 'bK', qKey = kolor === 'w' ? 'wQ' : 'bQ';
+        if (prawa[kKey] && pl[rzad][5] === '' && pl[rzad][6] === '' && pl[rzad][7].toLowerCase() === 'r') {
+            if (!czyPoleAtakowane(pl, rzad, 5, przeciwnik) && !czyPoleAtakowane(pl, rzad, 6, przeciwnik)) {
+                ruchy.push({ fr: rzad, fc: 4, tr: rzad, tc: 6, roszadaKrotka: true });
+            }
+        }
+        if (prawa[qKey] && pl[rzad][1] === '' && pl[rzad][2] === '' && pl[rzad][3] === '' && pl[rzad][0].toLowerCase() === 'r') {
+            if (!czyPoleAtakowane(pl, rzad, 2, przeciwnik) && !czyPoleAtakowane(pl, rzad, 3, przeciwnik)) {
+                ruchy.push({ fr: rzad, fc: 4, tr: rzad, tc: 2, roszadaDluga: true });
+            }
+        }
+    }
+
+    function wykonajRuchNaPlanszy(pl, ruch) {
+        const f = pl[ruch.fr][ruch.fc];
+        pl[ruch.tr][ruch.tc] = ruch.promocja ? (jestBiala(f) ? ruch.promocja.toUpperCase() : ruch.promocja) : f;
+        pl[ruch.fr][ruch.fc] = '';
+        if (ruch.roszadaKrotka) {
+            pl[ruch.tr][5] = pl[ruch.tr][7];
+            pl[ruch.tr][7] = '';
+        }
+        if (ruch.roszadaDluga) {
+            pl[ruch.tr][3] = pl[ruch.tr][0];
+            pl[ruch.tr][0] = '';
+        }
+    }
+
+    function generujLegalneRuchy(stanGry, kolor) {
+        const legalne = [];
+        const pl = stanGry.plansza;
+        for (let r = 0; r < 8; r++) {
+            for (let c = 0; c < 8; c++) {
+                if (pl[r][c] !== '' && kolorFigury(pl[r][c]) === kolor) {
+                    const pseudo = pseudoRuchyFigury(pl, r, c);
+                    for (const ruch of pseudo) {
+                        const kopia = klonujPlansze(pl);
+                        wykonajRuchNaPlanszy(kopia, ruch);
+                        if (!jestSzach(kopia, kolor)) legalne.push(ruch);
+                    }
+                    if (pl[r][c].toLowerCase() === 'k') {
+                        dodajRoszade(pl, kolor, stanGry.roszada, legalne);
+                    }
+                }
+            }
+        }
+        return legalne;
+    }
+
+    function zastosujRuch(stanGry, ruch) {
+        const nowyStan = {
+            plansza: klonujPlansze(stanGry.plansza),
+            tura: stanGry.tura === 'w' ? 'b' : 'w',
+            roszada: Object.assign({}, stanGry.roszada),
+            ostatniRuch: ruch
+        };
+        const f = stanGry.plansza[ruch.fr][ruch.fc];
+        if (f.toLowerCase() === 'k') {
+            if (stanGry.tura === 'w') { nowyStan.roszada.wK = false; nowyStan.roszada.wQ = false; }
+            else { nowyStan.roszada.bK = false; nowyStan.roszada.bQ = false; }
+        }
+        if (ruch.fr === 7 && ruch.fc === 0) nowyStan.roszada.wQ = false;
+        if (ruch.fr === 7 && ruch.fc === 7) nowyStan.roszada.wK = false;
+        if (ruch.fr === 0 && ruch.fc === 0) nowyStan.roszada.bQ = false;
+        if (ruch.fr === 0 && ruch.fc === 7) nowyStan.roszada.bK = false;
+        wykonajRuchNaPlanszy(nowyStan.plansza, ruch);
+        return nowyStan;
+    }
+
+    // ---------- Ocena pozycji i AI (minimax + alfa-beta) ----------
+    const TABELA_PIONKA = [0,0,0,0,0,0,0,0, 50,50,50,50,50,50,50,50, 10,10,20,30,30,20,10,10, 5,5,10,25,25,10,5,5, 0,0,0,20,20,0,0,0, 5,-5,-10,0,0,-10,-5,5, 5,10,10,-20,-20,10,10,5, 0,0,0,0,0,0,0,0];
+    const TABELA_SKOCZKA = [-50,-40,-30,-30,-30,-30,-40,-50, -40,-20,0,0,0,0,-20,-40, -30,0,10,15,15,10,0,-30, -30,5,15,20,20,15,5,-30, -30,0,15,20,20,15,0,-30, -30,5,10,15,15,10,5,-30, -40,-20,0,5,5,0,-20,-40, -50,-40,-30,-30,-30,-30,-40,-50];
+
+    function ocenaPozycji(pl) {
+        let suma = 0;
+        for (let r = 0; r < 8; r++) {
+            for (let c = 0; c < 8; c++) {
+                const f = pl[r][c];
+                if (f === '') continue;
+                const typ = f.toLowerCase();
+                let wartosc = WARTOSCI[typ];
+                const idx = kolorFigury(f) === 'w' ? r * 8 + c : (7 - r) * 8 + c;
+                if (typ === 'p') wartosc += TABELA_PIONKA[idx];
+                if (typ === 'n') wartosc += TABELA_SKOCZKA[idx];
+                suma += kolorFigury(f) === 'w' ? wartosc : -wartosc;
+            }
+        }
+        return suma;
+    }
+
+    function minimax(stanGry, glebokosc, alfa, beta, maksymalizuje) {
+        const kolor = maksymalizuje ? 'w' : 'b';
+        const ruchy = generujLegalneRuchy(stanGry, kolor);
+        if (ruchy.length === 0) {
+            if (jestSzach(stanGry.plansza, kolor)) return maksymalizuje ? -100000 + glebokosc : 100000 - glebokosc;
+            return 0; // pat
+        }
+        if (glebokosc === 0) return ocenaPozycji(stanGry.plansza);
+
+        if (maksymalizuje) {
+            let najlepszy = -Infinity;
+            for (const ruch of ruchy) {
+                const wynik = minimax(zastosujRuch(stanGry, ruch), glebokosc - 1, alfa, beta, false);
+                najlepszy = Math.max(najlepszy, wynik);
+                alfa = Math.max(alfa, wynik);
+                if (beta <= alfa) break;
+            }
+            return najlepszy;
+        } else {
+            let najlepszy = Infinity;
+            for (const ruch of ruchy) {
+                const wynik = minimax(zastosujRuch(stanGry, ruch), glebokosc - 1, alfa, beta, true);
+                najlepszy = Math.min(najlepszy, wynik);
+                beta = Math.min(beta, wynik);
+                if (beta <= alfa) break;
+            }
+            return najlepszy;
+        }
+    }
+
+    function najlepszyRuchAI(stanGry, glebokosc) {
+        const ruchy = generujLegalneRuchy(stanGry, 'b');
+        let najlepszyWynik = Infinity;
+        let kandydaci = [];
+        for (const ruch of ruchy) {
+            const wynik = minimax(zastosujRuch(stanGry, ruch), glebokosc - 1, -Infinity, Infinity, true);
+            if (wynik < najlepszyWynik) { najlepszyWynik = wynik; kandydaci = [ruch]; }
+            else if (wynik === najlepszyWynik) { kandydaci.push(ruch); }
+        }
+        return kandydaci[Math.floor(Math.random() * kandydaci.length)];
+    }
+
+    // ========================= UI =========================
+    let zaznaczone = null;
+    let legalneDlaZaznaczonego = [];
+    let koniecGry = false;
+
+    function renderuj() {
+        const plansza = document.getElementById('plansza');
+        plansza.innerHTML = '';
+        const krolWSzachu = {};
+        ['w', 'b'].forEach(k => {
+            if (jestSzach(stan.plansza, k)) {
+                const pos = znajdzKrola(stan.plansza, k);
+                if (pos) krolWSzachu[pos.r + '-' + pos.c] = true;
+            }
+        });
+        for (let r = 0; r < 8; r++) {
+            for (let c = 0; c < 8; c++) {
+                const pole = document.createElement('div');
+                pole.className = 'pole ' + ((r + c) % 2 === 0 ? 'jasne' : 'ciemne');
+                const f = stan.plansza[r][c];
+                if (f !== '') {
+                    pole.innerHTML = `<span class="${jestBiala(f) ? 'figura-biala' : 'figura-czarna'}">${SYMBOLE[f]}</span>`;
+                }
+                if (zaznaczone && zaznaczone.r === r && zaznaczone.c === c) pole.classList.add('zaznaczone');
+                if (stan.ostatniRuch && ((stan.ostatniRuch.fr === r && stan.ostatniRuch.fc === c) || (stan.ostatniRuch.tr === r && stan.ostatniRuch.tc === c))) pole.classList.add('ostatni-ruch');
+                if (krolWSzachu[r + '-' + c]) pole.classList.add('krol-szach');
+                const ruchDlaTegoPola = legalneDlaZaznaczonego.find(m => m.tr === r && m.tc === c);
+                if (ruchDlaTegoPola) pole.classList.add(stan.plansza[r][c] !== '' ? 'cel-bicie' : 'cel');
+                pole.addEventListener('click', () => kliknietoPole(r, c));
+                plansza.appendChild(pole);
+            }
+        }
+        document.getElementById('tura-info').innerText = koniecGry ? '—' : (stan.tura === 'w' ? 'Twój ruch' : 'AI myśli…');
+    }
+
+    function kliknietoPole(r, c) {
+        if (koniecGry || stan.tura !== 'w') return;
+        const f = stan.plansza[r][c];
+        if (zaznaczone) {
+            const ruch = legalneDlaZaznaczonego.find(m => m.tr === r && m.tc === c);
+            if (ruch) {
+                if (ruch.promocja) {
+                    pokazWyborPromocji(ruch);
+                } else {
+                    wykonajIOdswiez(ruch);
+                }
+                zaznaczone = null; legalneDlaZaznaczonego = [];
+                return;
+            }
+        }
+        if (f !== '' && kolorFigury(f) === 'w') {
+            zaznaczone = { r, c };
+            const wszystkie = generujLegalneRuchy(stan, 'w');
+            legalneDlaZaznaczonego = wszystkie.filter(m => m.fr === r && m.fc === c);
+        } else {
+            zaznaczone = null; legalneDlaZaznaczonego = [];
+        }
+        renderuj();
+    }
+
+    function pokazWyborPromocji(ruchBazowy) {
+        const overlay = document.getElementById('promocja-overlay');
+        const box = document.getElementById('promocja-box');
+        box.innerHTML = '';
+        [['q','♕'],['r','♖'],['b','♗'],['n','♘']].forEach(([kod, symbol]) => {
+            const btn = document.createElement('button');
+            btn.innerText = symbol;
+            btn.addEventListener('click', () => {
+                overlay.style.display = 'none';
+                wykonajIOdswiez(Object.assign({}, ruchBazowy, { promocja: kod }));
+            });
+            box.appendChild(btn);
+        });
+        overlay.style.display = 'flex';
+    }
+
+    async function wykonajIOdswiez(ruch) {
+        stan = zastosujRuch(stan, ruch);
+        renderuj();
+        sprawdzKoniecGry(() => setTimeout(ruchAI, 400));
+    }
+
+    function sprawdzKoniecGry(dalej) {
+        const ruchyPrzeciwnika = generujLegalneRuchy(stan, stan.tura);
+        if (ruchyPrzeciwnika.length === 0) {
+            koniecGry = true;
+            const status = document.getElementById('status-gry');
+            const ekranKonca = document.getElementById('ekran-konca');
+            const tekst = document.getElementById('tekst-konca');
+            if (jestSzach(stan.plansza, stan.tura)) {
+                const wygralGracz = stan.tura === 'b';
+                tekst.innerText = wygralGracz ? '🎉 Szach-mat! Wygrałeś!' : '😔 Szach-mat! Wygrało AI.';
+                if (wygralGracz) {
+                    GryWspolne.dodajPunkty('szachy', 1).then(p => document.getElementById('licznik-punktow').innerText = p);
+                }
+            } else {
+                tekst.innerText = '🤝 Pat — remis.';
+            }
+            ekranKonca.style.display = 'block';
+            status.innerText = '';
+            return;
+        }
+        if (dalej) dalej();
+    }
+
+    function ruchAI() {
+        if (koniecGry) return;
+        document.getElementById('status-gry').innerText = 'AI myśli…';
+        renderuj();
+        setTimeout(() => {
+            const ruch = najlepszyRuchAI(stan, 3);
+            if (ruch) {
+                stan = zastosujRuch(stan, ruch);
+            }
+            document.getElementById('status-gry').innerText = '';
+            renderuj();
+            sprawdzKoniecGry(null);
+        }, 50);
+    }
+
+    document.getElementById('btn-nowa-partia').addEventListener('click', () => {
+        stan = { plansza: nowaPlansza(), tura: 'w', roszada: { wK: true, wQ: true, bK: true, bQ: true }, ostatniRuch: null };
+        koniecGry = false;
+        zaznaczone = null; legalneDlaZaznaczonego = [];
+        document.getElementById('ekran-konca').style.display = 'none';
+        renderuj();
+    });
+
+    renderuj();
+    window.addEventListener('beforeunload', () => GryWspolne.zatrzymajZegar());
+})();
+</script>
+</body>
+</html>

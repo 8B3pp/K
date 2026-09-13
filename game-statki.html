@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Statki — Terminarz 7B</title>
+<style>
+    * { box-sizing: border-box; margin:0; padding:0; }
+    body { background: radial-gradient(ellipse at top, #0D1B2A 0%, #050810 100%); min-height:100vh; font-family:'Segoe UI',sans-serif; overflow-x:hidden; position:relative; }
+    #gwiazdy-tlo { position:fixed; inset:0; pointer-events:none; z-index:0; }
+    .wrap { position:relative; z-index:1; max-width:640px; margin:0 auto; padding:20px; }
+
+    #ladowanie-ekran { position:fixed; inset:0; background:#050810; z-index:500; display:flex; flex-direction:column; align-items:center; justify-content:center; color:#fff; }
+    .spinner { width:44px; height:44px; border-radius:50%; border:4px solid rgba(255,255,255,0.15); border-top-color:#38BDF8; animation:spin .8s linear infinite; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+
+    .info-panel { display:flex; justify-content:space-between; align-items:center; background:rgba(22,36,71,0.7); border:1px solid rgba(56,189,248,0.25); border-radius:14px; padding:14px 18px; margin-bottom:18px; color:#fff; flex-wrap:wrap; gap:10px; }
+    .info-panel strong { color:#38BDF8; font-size:20px; }
+
+    #plansza { display:grid; grid-template-columns: repeat(10, 1fr); gap:5px; background:rgba(13,27,42,0.6); border:1px solid rgba(56,189,248,0.25); border-radius:16px; padding:16px; box-shadow:0 0 40px rgba(56,189,248,0.08); }
+    .komorka { aspect-ratio:1; border-radius:6px; background:linear-gradient(160deg,#12233d,#0a1626); cursor:crosshair; display:flex; align-items:center; justify-content:center; font-size:18px; transition:transform .12s ease, background .2s ease; user-select:none; }
+    .komorka:hover:not(.odkryta) { background:linear-gradient(160deg,#1b3a63,#12233d); transform:scale(1.06); box-shadow:0 0 12px rgba(56,189,248,0.5); }
+    .komorka.trafienie { background:linear-gradient(160deg,#8b1f2f,#5c1420); animation:trafiony .4s ease; }
+    .komorka.pudlo { background:rgba(255,255,255,0.03); color:#3a4a63; }
+    @keyframes trafiony { 0%{transform:scale(1.3);} 100%{transform:scale(1);} }
+
+    .zakonczenie { text-align:center; color:#fff; margin-top:20px; padding:20px; background:rgba(40,167,69,0.12); border:1px solid rgba(40,167,69,0.4); border-radius:14px; display:none; }
+    .zakonczenie button { margin-top:12px; padding:10px 20px; background:#28a745; color:white; border:none; border-radius:8px; font-weight:bold; cursor:pointer; }
+    .zasady { color:#94A3B8; font-size:12.5px; text-align:center; margin-top:14px; line-height:1.6; }
+</style>
+</head>
+<body>
+<div id="gwiazdy-tlo"></div>
+<div id="ladowanie-ekran"><div class="spinner"></div><p style="margin-top:14px;">Ładowanie…</p></div>
+
+<div class="wrap" id="glowny-widok" style="display:none;">
+    <div id="pasek-gry-kontener"></div>
+    <div class="info-panel">
+        <div>🎯 Trafienia: <strong id="licznik-trafien">0</strong> / 15</div>
+        <div>💥 Pudła: <strong id="licznik-pudel">0</strong></div>
+        <div>🏆 Punkty za statki: <strong id="licznik-punktow">0</strong></div>
+    </div>
+    <div id="plansza"></div>
+    <div class="zasady">Najedź myszką, żeby wycelować, kliknij, żeby strzelić. Znajdź wszystkie 15 statków, żeby zdobyć 1 punkt.</div>
+    <div class="zakonczenie" id="ekran-wygranej">
+        <h2>🎉 Wszystkie statki zatopione!</h2>
+        <p>Zdobywasz 1 punkt.</p>
+        <button id="btn-nowa-gra">Zagraj ponownie</button>
+    </div>
+</div>
+
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+<script src="gry-wspolne.js"></script>
+<script>
+(async function () {
+    const user = await GryWspolne.start();
+    if (!user) return;
+
+    const pozostaloCzasu = await GryWspolne.pobierzPozostalyCzas();
+    if (pozostaloCzasu <= 0) { GryWspolne.pokazBlokadeLimitu(); return; }
+
+    document.getElementById('ladowanie-ekran').style.display = 'none';
+    document.getElementById('glowny-widok').style.display = 'block';
+    GryWspolne.renderujPasekGory('🚢 Statki', 'pasek-gry-kontener');
+    GryWspolne.stworzGwiazdy(document.getElementById('gwiazdy-tlo'), 90);
+    GryWspolne.aktualizujPasekCzasu(pozostaloCzasu);
+    GryWspolne.uruchomZegar(() => GryWspolne.pokazBlokadeLimitu());
+
+    const ROZMIAR = 10;
+    const LICZBA_STATKOW = 15;
+    let statki = new Set();
+    let odkryte = new Set();
+    let trafienia = 0;
+    let pudla = 0;
+    let gotowe = false;
+
+    const postep = await GryWspolne.pobierzPostep('statki');
+    document.getElementById('licznik-punktow').innerText = postep.punkty;
+
+    function nowaPlansza() {
+        statki = new Set();
+        odkryte = new Set();
+        trafienia = 0; pudla = 0; gotowe = false;
+        while (statki.size < LICZBA_STATKOW) {
+            statki.add(Math.floor(Math.random() * ROZMIAR * ROZMIAR));
+        }
+        document.getElementById('licznik-trafien').innerText = '0';
+        document.getElementById('licznik-pudel').innerText = '0';
+        document.getElementById('ekran-wygranej').style.display = 'none';
+        renderujPlansze();
+    }
+
+    function renderujPlansze() {
+        const plansza = document.getElementById('plansza');
+        plansza.innerHTML = '';
+        for (let i = 0; i < ROZMIAR * ROZMIAR; i++) {
+            const c = document.createElement('div');
+            c.className = 'komorka';
+            c.dataset.i = i;
+            if (odkryte.has(i)) {
+                c.classList.add(statki.has(i) ? 'trafienie' : 'pudlo');
+                c.innerText = statki.has(i) ? '🚢' : '·';
+            } else {
+                c.addEventListener('click', () => strzel(i));
+            }
+            plansza.appendChild(c);
+        }
+    }
+
+    async function strzel(i) {
+        if (gotowe || odkryte.has(i)) return;
+        odkryte.add(i);
+        if (statki.has(i)) {
+            trafienia++;
+            document.getElementById('licznik-trafien').innerText = trafienia;
+        } else {
+            pudla++;
+            document.getElementById('licznik-pudel').innerText = pudla;
+        }
+        renderujPlansze();
+
+        if (trafienia === LICZBA_STATKOW) {
+            gotowe = true;
+            const nowePunkty = await GryWspolne.dodajPunkty('statki', 1);
+            document.getElementById('licznik-punktow').innerText = nowePunkty;
+            document.getElementById('ekran-wygranej').style.display = 'block';
+        }
+    }
+
+    document.getElementById('btn-nowa-gra').addEventListener('click', nowaPlansza);
+    nowaPlansza();
+
+    window.addEventListener('beforeunload', () => GryWspolne.zatrzymajZegar());
+})();
+</script>
+</body>
+</html>
